@@ -1,21 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Reflections</title>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Cinzel:wght@400;500&display=swap"
-    rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Cinzel:wght@400;500&display=swap" rel="stylesheet"/>
   <style>
-    *,
-    *::before,
-    *::after {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
       --bg: #0d0d0f;
@@ -41,430 +32,300 @@
       position: relative;
     }
 
-    /* ── Geometric pattern background ── */
+    /* ── RTL support for Arabic ── */
+    body.rtl { direction: rtl; text-align: right; }
+    body.rtl blockquote::before { content: '\201D'; margin-right: 0; margin-left: 0.1rem; }
+    body.rtl .hint { right: auto; left: 18px; }
+    body.rtl .card::before { left: auto; right: 12px; border-width: 1px 1px 0 0; }
+    body.rtl .card::after  { right: auto; left: 12px; border-width: 0 0 1px 1px; }
+
+    /* ── Background ── */
     canvas#pattern {
-      position: fixed;
-      inset: 0;
-      opacity: 0.07;
-      pointer-events: none;
-      z-index: 0;
+      position: fixed; inset: 0;
+      opacity: 0.07; pointer-events: none; z-index: 0;
     }
 
-    /* ── Radial glow ── */
     body::before {
       content: '';
-      position: fixed;
-      inset: 0;
-      background: radial-gradient(ellipse 60% 50% at 50% 50%, rgba(201, 168, 76, 0.08) 0%, transparent 70%);
-      pointer-events: none;
-      z-index: 0;
+      position: fixed; inset: 0;
+      background: radial-gradient(ellipse 60% 50% at 50% 50%, rgba(201,168,76,0.08) 0%, transparent 70%);
+      pointer-events: none; z-index: 0;
     }
 
+    /* ── Layout ── */
     .container {
-      position: relative;
-      z-index: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 2.5rem;
-      padding: 2rem;
-      max-width: 680px;
-      width: 100%;
+      position: relative; z-index: 1;
+      display: flex; flex-direction: column;
+      align-items: center; gap: 2.5rem;
+      padding: 2rem; max-width: 680px; width: 100%;
     }
 
-    header {
-      text-align: center;
-      animation: fadeDown 1s ease both;
-    }
+    /* ── Header ── */
+    header { text-align: center; animation: fadeDown 1s ease both; }
 
     header h1 {
       font-family: 'Cinzel', serif;
       font-size: clamp(1rem, 3vw, 1.2rem);
-      letter-spacing: 0.35em;
-      color: var(--gold);
-      font-weight: 400;
-      text-transform: uppercase;
-    }
-
-    .language-selector {
-      margin-top: 1.2rem;
-      display: flex;
-      gap: 0.8rem;
-      justify-content: center;
-      animation: fadeDown 1s ease 0.15s both;
-    }
-
-    .lang-btn {
-      font-family: 'Cinzel', serif;
-      font-size: 0.65rem;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--muted);
-      background: transparent;
-      border: 1px solid var(--border);
-      padding: 0.5rem 1rem;
-      cursor: pointer;
-      transition: background 0.3s, border-color 0.3s, color 0.3s;
-      border-radius: 2px;
-    }
-
-    .lang-btn:hover {
-      border-color: var(--gold);
-      color: var(--gold);
-    }
-
-    .lang-btn.active {
-      background: var(--accent);
-      border-color: var(--gold);
-      color: var(--gold);
+      letter-spacing: 0.35em; color: var(--gold);
+      font-weight: 400; text-transform: uppercase;
     }
 
     header .divider {
-      margin: 0.6rem auto;
-      width: 60px;
-      height: 1px;
+      margin: 0.6rem auto; width: 60px; height: 1px;
       background: linear-gradient(90deg, transparent, var(--gold), transparent);
     }
 
+    /* ── Language selector ── */
+    .language-selector {
+      margin-top: 1.2rem; display: flex; gap: 0.8rem;
+      justify-content: center; animation: fadeDown 1s ease 0.15s both;
+    }
+
+    .lang-btn {
+      font-family: 'Cinzel', serif; font-size: 0.65rem;
+      letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--muted); background: transparent;
+      border: 1px solid var(--border); padding: 0.5rem 1rem;
+      cursor: pointer; border-radius: 2px;
+      transition: background 0.3s, border-color 0.3s, color 0.3s;
+    }
+    .lang-btn:hover { border-color: var(--gold); color: var(--gold); }
+    .lang-btn.active { background: var(--accent); border-color: var(--gold); color: var(--gold); }
+
     /* ── Card ── */
     .card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      padding: 3rem 3.5rem;
-      width: 100%;
-      position: relative;
-      cursor: pointer;
-      overflow: hidden;
-      animation: fadeUp 1s ease 0.3s both;
-      transition: border-color 0.3s;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 4px; padding: 3rem 3.5rem; width: 100%;
+      position: relative; cursor: pointer; overflow: hidden;
+      animation: fadeUp 1s ease 0.3s both; transition: border-color 0.3s;
     }
+    .card:hover { border-color: rgba(180, 150, 90, 0.5); }
+    .card.custom  { border-color: rgba(180, 150, 90, 0.45); }
 
-    .card:hover {
-      border-color: rgba(180, 150, 90, 0.5);
+    .card::before, .card::after {
+      content: ''; position: absolute;
+      width: 20px; height: 20px;
+      border-color: var(--gold); border-style: solid; opacity: 0.5;
     }
+    .card::before { top: 12px; left: 12px; border-width: 1px 0 0 1px; }
+    .card::after  { bottom: 12px; right: 12px; border-width: 0 1px 1px 0; }
 
-    /* corner ornaments */
-    .card::before,
-    .card::after {
-      content: '';
-      position: absolute;
-      width: 20px;
-      height: 20px;
-      border-color: var(--gold);
-      border-style: solid;
-      opacity: 0.5;
+    /* Delete button — visible only on custom quotes */
+    .delete-btn {
+      display: none; position: absolute; top: 14px; right: 14px;
+      font-family: 'Cinzel', serif; font-size: 0.55rem;
+      letter-spacing: 0.15em; text-transform: uppercase;
+      color: #8a4a4a; background: rgba(80,30,30,0.4);
+      border: 1px solid rgba(180,80,80,0.25); padding: 0.3rem 0.75rem;
+      cursor: pointer; border-radius: 2px;
+      transition: background 0.2s, color 0.2s; z-index: 10;
     }
+    .delete-btn:hover { background: rgba(120,40,40,0.6); color: #d47a7a; }
+    .card.custom .delete-btn { display: block; }
 
-    .card::before {
-      top: 12px;
-      left: 12px;
-      border-width: 1px 0 0 1px;
-    }
+    .card-inner { transition: opacity 0.35s ease, transform 0.35s ease; }
+    .card-inner.fade-out { opacity: 0; transform: translateY(6px); }
 
-    .card::after {
-      bottom: 12px;
-      right: 12px;
-      border-width: 0 1px 1px 0;
-    }
-
-    .card-inner {
-      transition: opacity 0.35s ease, transform 0.35s ease;
-    }
-
-    .card-inner.fade-out {
-      opacity: 0;
-      transform: translateY(6px);
-    }
+    .quote-meta { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.5rem; }
 
     .quote-number {
-      font-family: 'Cinzel', serif;
-      font-size: 0.65rem;
-      letter-spacing: 0.2em;
-      color: var(--gold);
-      margin-bottom: 1.5rem;
-      display: block;
+      font-family: 'Cinzel', serif; font-size: 0.65rem;
+      letter-spacing: 0.2em; color: var(--gold);
     }
+
+    .custom-badge {
+      display: none; font-family: 'Cinzel', serif; font-size: 0.5rem;
+      letter-spacing: 0.15em; color: var(--gold);
+      border: 1px solid rgba(180,150,90,0.4); padding: 0.15rem 0.55rem;
+      border-radius: 2px; text-transform: uppercase;
+    }
+    .card.custom .custom-badge { display: inline-block; }
 
     blockquote {
-      font-size: clamp(1.2rem, 3vw, 1.6rem);
-      font-weight: 300;
-      line-height: 1.7;
-      color: var(--text);
-      font-style: italic;
-      margin-bottom: 1.8rem;
+      font-size: clamp(1.2rem, 3vw, 1.6rem); font-weight: 300;
+      line-height: 1.7; color: var(--text); font-style: italic; margin-bottom: 1.8rem;
     }
-
     blockquote::before {
-      content: '\201C';
-      font-size: 3.5rem;
-      line-height: 0;
-      vertical-align: -0.6rem;
-      color: var(--gold);
-      margin-right: 0.1rem;
-      font-style: normal;
+      content: '\201C'; font-size: 3.5rem; line-height: 0;
+      vertical-align: -0.6rem; color: var(--gold); margin-right: 0.1rem; font-style: normal;
     }
 
     .attribution {
-      font-family: 'Cinzel', serif;
-      font-size: 0.7rem;
-      letter-spacing: 0.2em;
-      color: var(--muted);
-      text-transform: uppercase;
+      font-family: 'Cinzel', serif; font-size: 0.7rem;
+      letter-spacing: 0.2em; color: var(--muted); text-transform: uppercase;
     }
 
     .hint {
-      position: absolute;
-      bottom: 14px;
-      right: 18px;
-      font-size: 0.6rem;
-      letter-spacing: 0.15em;
-      color: var(--muted);
-      text-transform: uppercase;
-      opacity: 0.6;
-      font-family: 'Cinzel', serif;
+      position: absolute; bottom: 14px; right: 18px;
+      font-size: 0.6rem; letter-spacing: 0.15em;
+      color: var(--muted); text-transform: uppercase;
+      opacity: 0.6; font-family: 'Cinzel', serif;
     }
+    .card.custom .hint { opacity: 0; }
 
-    /* ── Counter dots ── */
+    /* ── Dots ── */
     .dots {
-      display: flex;
-      gap: 0.5rem;
+      display: flex; gap: 0.5rem; flex-wrap: wrap;
+      justify-content: center; max-width: 320px;
       animation: fadeUp 1s ease 0.5s both;
     }
-
     .dot {
-      width: 5px;
-      height: 5px;
-      border-radius: 50%;
-      background: var(--muted);
+      width: 5px; height: 5px; border-radius: 50%;
+      background: var(--muted); cursor: pointer;
       transition: background 0.3s, transform 0.3s;
-      cursor: pointer;
     }
+    .dot.active { background: var(--gold); transform: scale(1.4); }
+    .dot.is-custom { background: rgba(180,150,90,0.35); }
+    .dot.is-custom.active { background: var(--gold); }
 
-    .dot.active {
-      background: var(--gold);
-      transform: scale(1.4);
-    }
+    /* ── Button row ── */
+    .btn-row { display: flex; gap: 1rem; animation: fadeUp 1s ease 0.6s both; }
 
-    /* ── Button ── */
     .btn {
-      font-family: 'Cinzel', serif;
-      font-size: 0.7rem;
-      letter-spacing: 0.3em;
-      text-transform: uppercase;
-      color: var(--gold);
-      background: transparent;
-      border: 1px solid var(--border);
-      padding: 0.9rem 2.5rem;
-      cursor: pointer;
+      font-family: 'Cinzel', serif; font-size: 0.7rem;
+      letter-spacing: 0.3em; text-transform: uppercase;
+      color: var(--gold); background: transparent;
+      border: 1px solid var(--border); padding: 0.9rem 2.5rem;
+      cursor: pointer; border-radius: 2px;
       transition: background 0.3s, border-color 0.3s, color 0.3s;
-      animation: fadeUp 1s ease 0.6s both;
-      border-radius: 2px;
+    }
+    .btn:hover { background: var(--accent); border-color: var(--gold); color: var(--gold-light); }
+    .btn:active { transform: scale(0.98); }
+
+    .btn-ghost {
+      font-family: 'Cinzel', serif; font-size: 0.7rem;
+      letter-spacing: 0.25em; text-transform: uppercase;
+      color: var(--muted); background: transparent;
+      border: 1px solid rgba(120,110,90,0.2); padding: 0.9rem 1.8rem;
+      cursor: pointer; border-radius: 2px;
+      transition: border-color 0.3s, color 0.3s;
+    }
+    .btn-ghost:hover { border-color: var(--gold); color: var(--gold); }
+
+    /* ── Audio button (fixed top-right) ── */
+    .audio-btn {
+      position: fixed; top: 1.5rem; right: 1.5rem; z-index: 10;
+      background: transparent; border: 1px solid var(--border);
+      border-radius: 2px; padding: 0.55rem 0.75rem;
+      cursor: pointer; display: flex; align-items: center; gap: 0.5rem;
+      font-family: 'Cinzel', serif; font-size: 0.6rem;
+      letter-spacing: 0.2em; color: var(--muted); text-transform: uppercase;
+      transition: border-color 0.3s, color 0.3s, background 0.3s;
+      animation: fadeDown 1s ease 0.8s both;
+    }
+    .audio-btn:hover { border-color: var(--gold); color: var(--gold); background: var(--accent); }
+    .audio-btn.playing { border-color: rgba(201,168,76,0.4); color: var(--gold); }
+    .audio-btn svg { width: 13px; height: 13px; flex-shrink: 0; }
+    .audio-btn.playing::after {
+      content: ''; position: absolute; inset: -4px;
+      border-radius: 3px; border: 1px solid var(--gold);
+      opacity: 0; animation: audioRing 2.5s ease-out infinite;
     }
 
-    .btn:hover {
-      background: var(--accent);
-      border-color: var(--gold);
-      color: var(--gold-light);
+    /* ── Modal ── */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.78); backdrop-filter: blur(5px);
+      z-index: 100; align-items: center; justify-content: center; padding: 2rem;
+    }
+    .modal-overlay.open { display: flex; }
+
+    .modal {
+      background: #16161e; border: 1px solid var(--border);
+      border-radius: 4px; padding: 2.5rem 3rem;
+      width: 100%; max-width: 520px; position: relative;
+      animation: modalIn 0.3s ease both;
+    }
+    .modal::before, .modal::after {
+      content: ''; position: absolute;
+      width: 16px; height: 16px;
+      border-color: var(--gold); border-style: solid; opacity: 0.4;
+    }
+    .modal::before { top: 10px; left: 10px; border-width: 1px 0 0 1px; }
+    .modal::after  { bottom: 10px; right: 10px; border-width: 0 1px 1px 0; }
+
+    .modal-title {
+      font-family: 'Cinzel', serif; font-size: 0.8rem;
+      letter-spacing: 0.3em; color: var(--gold);
+      text-transform: uppercase; margin-bottom: 0.5rem;
+    }
+    .modal-divider {
+      width: 40px; height: 1px;
+      background: linear-gradient(90deg, var(--gold), transparent); margin-bottom: 2rem;
     }
 
-    .btn:active {
-      transform: scale(0.98);
+    .field { margin-bottom: 1.5rem; }
+    .field label {
+      display: block; font-family: 'Cinzel', serif; font-size: 0.6rem;
+      letter-spacing: 0.2em; color: var(--muted);
+      text-transform: uppercase; margin-bottom: 0.6rem;
     }
+    .field textarea, .field input[type="text"] {
+      width: 100%; background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border); border-radius: 2px;
+      color: var(--text); font-family: 'Cormorant Garamond', serif;
+      font-size: 1.05rem; padding: 0.8rem 1rem; outline: none;
+      transition: border-color 0.25s; resize: none;
+    }
+    .field textarea { height: 110px; line-height: 1.6; }
+    .field textarea:focus, .field input[type="text"]:focus { border-color: var(--gold); }
+    .field textarea::placeholder, .field input[type="text"]::placeholder { color: var(--muted); font-style: italic; }
+
+    .modal-error { font-size: 0.78rem; color: #c47a7a; margin-bottom: 1rem; min-height: 1.1rem; font-style: italic; }
+
+    .modal-actions { display: flex; gap: 0.8rem; justify-content: flex-end; }
+
+    .btn-cancel {
+      font-family: 'Cinzel', serif; font-size: 0.65rem; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--muted); background: transparent;
+      border: 1px solid rgba(120,110,90,0.2); padding: 0.75rem 1.5rem;
+      cursor: pointer; border-radius: 2px; transition: border-color 0.2s, color 0.2s;
+    }
+    .btn-cancel:hover { border-color: var(--muted); color: var(--text); }
+
+    .btn-save {
+      font-family: 'Cinzel', serif; font-size: 0.65rem; letter-spacing: 0.2em;
+      text-transform: uppercase; color: #0d0d0f; background: var(--gold);
+      border: 1px solid var(--gold); padding: 0.75rem 1.8rem;
+      cursor: pointer; border-radius: 2px; transition: background 0.2s, border-color 0.2s;
+    }
+    .btn-save:hover { background: var(--gold-light); border-color: var(--gold-light); }
+    .btn-save:active { transform: scale(0.98); }
 
     /* ── Animations ── */
     @keyframes fadeDown {
-      from {
-        opacity: 0;
-        transform: translateY(-16px);
-      }
-
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+      from { opacity: 0; transform: translateY(-16px); }
+      to   { opacity: 1; transform: translateY(0); }
     }
-
     @keyframes fadeUp {
-      from {
-        opacity: 0;
-        transform: translateY(16px);
-      }
-
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
     }
-
-    /* ── Audio toggle ── */
-    .audio-btn {
-      position: fixed;
-      top: 1.5rem;
-      right: 1.5rem;
-      z-index: 10;
-      background: transparent;
-      border: 1px solid var(--border);
-      border-radius: 2px;
-      padding: 0.55rem 0.75rem;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-family: 'Cinzel', serif;
-      font-size: 0.6rem;
-      letter-spacing: 0.2em;
-      color: var(--muted);
-      text-transform: uppercase;
-      transition: border-color 0.3s, color 0.3s, background 0.3s;
-      animation: fadeDown 1s ease 0.8s both;
-    }
-    .audio-btn:hover {
-      border-color: var(--gold);
-      color: var(--gold);
-      background: var(--accent);
-    }
-    .audio-btn.playing {
-      border-color: rgba(201,168,76,0.4);
-      color: var(--gold);
-    }
-    .audio-btn svg {
-      width: 13px;
-      height: 13px;
-      flex-shrink: 0;
-    }
-    /* ripple ring when playing */
-    .audio-btn.playing::after {
-      content: '';
-      position: absolute;
-      inset: -4px;
-      border-radius: 3px;
-      border: 1px solid var(--gold);
-      opacity: 0;
-      animation: audioRing 2.5s ease-out infinite;
+    @keyframes modalIn {
+      from { opacity: 0; transform: translateY(20px) scale(0.97); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
     }
     @keyframes audioRing {
       0%   { opacity: 0.5; inset: -2px; }
-      100% { opacity: 0;   inset: -10px; }
-    }
-
-    /* ── Audio toggle ── */
-    .audio-btn {
-      position: fixed;
-      top: 1.5rem;
-      right: 1.5rem;
-      z-index: 10;
-      background: transparent;
-      border: 1px solid var(--border);
-      border-radius: 2px;
-      padding: 0.55rem 0.75rem;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-family: 'Cinzel', serif;
-      font-size: 0.6rem;
-      letter-spacing: 0.2em;
-      color: var(--muted);
-      text-transform: uppercase;
-      transition: border-color 0.3s, color 0.3s, background 0.3s;
-      animation: fadeDown 1s ease 0.8s both;
-    }
-
-    .audio-btn:hover {
-      border-color: var(--gold);
-      color: var(--gold);
-      background: var(--accent);
-    }
-
-    .audio-btn.playing {
-      border-color: rgba(201, 168, 76, 0.4);
-      color: var(--gold);
-    }
-
-    .audio-btn svg {
-      width: 13px;
-      height: 13px;
-      flex-shrink: 0;
-    }
-
-    /* ripple ring when playing */
-    .audio-btn.playing::after {
-      content: '';
-      position: absolute;
-      inset: -4px;
-      border-radius: 3px;
-      border: 1px solid var(--gold);
-      opacity: 0;
-      animation: audioRing 2.5s ease-out infinite;
-    }
-
-    @keyframes audioRing {
-      0% {
-        opacity: 0.5;
-        inset: -2px;
-      }
-
-      100% {
-        opacity: 0;
-        inset: -10px;
-      }
-    }
-
-    /* ── RTL Support for Arabic ── */
-    body.rtl {
-      direction: rtl;
-      text-align: right;
-    }
-
-    body.rtl blockquote::before {
-      content: '\201D';
-      margin-right: 0;
-      margin-left: 0.1rem;
-    }
-
-    body.rtl .hint {
-      right: auto;
-      left: 18px;
-    }
-
-    body.rtl .card::before {
-      left: auto;
-      right: 12px;
-      border-width: 1px 1px 0 0;
-    }
-
-    body.rtl .card::after {
-      right: auto;
-      left: 12px;
-      border-width: 0 0 1px 1px;
+      100% { opacity: 0; inset: -10px; }
     }
   </style>
 </head>
-
 <body>
 
-  <canvas id="pattern"></canvas>
+<canvas id="pattern"></canvas>
 
-  <div class="container">
-    <header>
-      <h1 id="headerTitle">Reflections</h1>
-      <div class="divider"></div>
-      <div class="language-selector">
-        <button class="lang-btn active" data-lang="en" onclick="switchLanguage('en')">English</button>
-        <button class="lang-btn" data-lang="ms" onclick="switchLanguage('ms')">Malay</button>
-        <button class="lang-btn" data-lang="ar" onclick="switchLanguage('ar')">العربية</button>
-      </div>
-    </header>
-
-    <div class="card" onclick="nextQuote()" title="Click for next quote">
-      <div class="card-inner" id="cardInner">
-        <span class="quote-number" id="quoteNumber">01 / 08</span>
-        <blockquote id="quoteText"></blockquote>
-        <div class="attribution" id="quoteAuthor"></div>
-      </div>
-      <span class="hint" id="cardHint">click to reveal</span>
-    </div>
+<!-- Audio toggle button -->
+<button class="audio-btn" id="audioBtn" onclick="toggleAudio()">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" fill="currentColor" stroke="none" opacity="0.7"/>
+    <line id="mutedX1" x1="23" y1="9" x2="17" y2="15"/>
+    <line id="mutedX2" x1="17" y1="9" x2="23" y2="15"/>
+    <path id="wave1" d="M15.54 8.46a5 5 0 0 1 0 7.07" style="display:none"/>
+    <path id="wave2" d="M19.07 4.93a10 10 0 0 1 0 14.14" style="display:none"/>
+  </svg>
+  <span id="audioLabel">Silence</span>
+</button>
 
 <div class="container">
   <header>
@@ -477,9 +338,13 @@
     </div>
   </header>
 
-  <div class="card" onclick="nextQuote()" title="Click for next quote">
+  <div class="card" id="mainCard" onclick="nextQuote()" title="Click for next quote">
+    <button class="delete-btn" onclick="deleteCurrentQuote(event)">✕ Remove</button>
     <div class="card-inner" id="cardInner">
-      <span class="quote-number" id="quoteNumber">01 / 08</span>
+      <div class="quote-meta">
+        <span class="quote-number" id="quoteNumber">01 / 08</span>
+        <span class="custom-badge">Your Quote</span>
+      </div>
       <blockquote id="quoteText"></blockquote>
       <div class="attribution" id="quoteAuthor"></div>
     </div>
@@ -488,29 +353,42 @@
 
   <div class="dots" id="dots"></div>
 
-  <button class="btn" onclick="nextQuote()" id="nextBtn">Next Reflection</button>
+  <div class="btn-row">
+    <button class="btn" id="nextBtn" onclick="nextQuote()">Next Reflection</button>
+    <button class="btn-ghost" onclick="openModal()">+ Add Quote</button>
+  </div>
+</div>
+
+<!-- Add Quote Modal -->
+<div class="modal-overlay" id="modalOverlay" onclick="overlayClick(event)">
+  <div class="modal">
+    <div class="modal-title">Add a Reflection</div>
+    <div class="modal-divider"></div>
+    <div class="field">
+      <label>Quote</label>
+      <textarea id="inputText" placeholder="Write your quote here…" maxlength="300"></textarea>
+    </div>
+    <div class="field">
+      <label>Author / Source</label>
+      <input type="text" id="inputAuthor" placeholder="e.g. Ibn Qayyim, Anonymous…" maxlength="80"/>
+    </div>
+    <div class="modal-error" id="modalError"></div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-save" onclick="saveQuote()">Save</button>
+    </div>
+  </div>
 </div>
 
 <script>
+  // ── Quote data ──
   const translations = {
-    en: {
-      title: 'Reflections',
-      nextBtn: 'Next Reflection',
-      hint: 'click to reveal'
-    },
-    ms: {
-      title: 'Renungan',
-      nextBtn: 'Renungan Seterusnya',
-      hint: 'klik untuk melihat'
-    },
-    ar: {
-      title: 'تأملات',
-      nextBtn: 'التأمل التالي',
-      hint: 'اضغط للكشف'
-    }
+    en: { title: 'Reflections', nextBtn: 'Next Reflection', hint: 'click to reveal' },
+    ms: { title: 'Renungan',    nextBtn: 'Renungan Seterusnya', hint: 'klik untuk melihat' },
+    ar: { title: 'تأملات',      nextBtn: 'التأمل التالي',       hint: 'اضغط للكشف' }
   };
 
-  const quotes = {
+  const builtIn = {
     en: [
       { text: "The more you know yourself, the more clarity there is. Self-knowledge has no end.", author: "Jiddu Krishnamurti" },
       { text: "Whoever knows himself knows his Lord.", author: "Traditional Saying" },
@@ -526,7 +404,7 @@
       { text: "Sesiapa yang mengenal dirinya akan mengenal Tuhannya.", author: "Pepatah Tradisional" },
       { text: "Janganlah kamu bersikap lemah, dan janganlah (pula) kamu bersedih hati.", author: "Al-Quran 3:139" },
       { text: "Permulaan kebijaksanaan adalah memanggil sesuatu dengan nama yang sebenar.", author: "Confucius" },
-      { text: "Sesiapa yang mempunyai 'sebab' untuk hidup boleh menanggung apa sahaja 'bagaimana' ia berlaku.", author: "Friedrich Nietzsche" },
+      { text: "Sesiapa yang mempunyai 'sebab' untuk hidup boleh menanggung apa sahaja 'bagaimana'.", author: "Friedrich Nietzsche" },
       { text: "Kesederhanaan adalah kecanggihan yang mutlak.", author: "Leonardo da Vinci" },
       { text: "Jiwa yang melihat keindahan kadangkala perlu berjalan sendirian.", author: "Johann Wolfgang von Goethe" },
       { text: "Di tengah-tengah kesukaran terdapatnya peluang.", author: "Albert Einstein" }
@@ -543,74 +421,90 @@
     ]
   };
 
+  // ── State ──
+  let currentLang = 'en';
   let current = 0;
   let isAnimating = false;
-  let currentLang = 'en';
 
-  // ── Language Switching ──
+  // ── Custom quotes (localStorage) ──
+  function loadCustom() {
+    try { return JSON.parse(localStorage.getItem('reflections_custom') || '[]'); }
+    catch { return []; }
+  }
+  function persistCustom(arr) {
+    localStorage.setItem('reflections_custom', JSON.stringify(arr));
+  }
+
+  let customQuotes = loadCustom();
+
+  function buildQuotes() {
+    return [...builtIn[currentLang], ...customQuotes.map(q => ({ ...q, custom: true }))];
+  }
+
+  // ── Language switching ──
   function switchLanguage(lang) {
     if (lang === currentLang) return;
     currentLang = lang;
-    
-    // Update active button
+
     document.querySelectorAll('.lang-btn').forEach(btn => {
       btn.classList.toggle('active', btn.dataset.lang === lang);
     });
 
-    // Update RTL for Arabic
-    if (lang === 'ar') {
-      document.body.classList.add('rtl');
-    } else {
-      document.body.classList.remove('rtl');
-    }
+    document.body.classList.toggle('rtl', lang === 'ar');
 
-    // Update UI text
-    updateUIText();
-    
+    const t = translations[lang];
+    document.getElementById('headerTitle').textContent = t.title;
+    document.getElementById('nextBtn').textContent     = t.nextBtn;
+    document.getElementById('cardHint').textContent    = t.hint;
+
+    // Reset to first quote of new language
     const inner = document.getElementById('cardInner');
     inner.classList.add('fade-out');
     setTimeout(() => {
-      renderQuote(current);
+      current = 0;
+      rebuildDots();
+      renderQuote(0);
       inner.classList.remove('fade-out');
     }, 350);
   }
 
-  function updateUIText() {
-    const t = translations[currentLang];
-    document.getElementById('headerTitle').textContent = t.title;
-    document.getElementById('nextBtn').textContent = t.nextBtn;
-    document.getElementById('cardHint').textContent = t.hint;
-  }
-
   // ── Dots ──
   const dotsEl = document.getElementById('dots');
-  quotes[currentLang].forEach((_, i) => {
-    const d = document.createElement('div');
-    d.className = 'dot' + (i === 0 ? ' active' : '');
-    d.onclick = () => goTo(i);
-    dotsEl.appendChild(d);
-  });
+
+  function rebuildDots() {
+    const quotes = buildQuotes();
+    dotsEl.innerHTML = '';
+    quotes.forEach((q, i) => {
+      const d = document.createElement('div');
+      const cls = ['dot'];
+      if (i === current) cls.push('active');
+      if (q.custom) cls.push('is-custom');
+      d.className = cls.join(' ');
+      d.title = q.custom ? 'Your quote' : '';
+      d.onclick = () => goTo(i);
+      dotsEl.appendChild(d);
+    });
+  }
 
   function updateDots(idx) {
-    document.querySelectorAll('.dot').forEach((d, i) => {
-      d.classList.toggle('active', i === idx);
-    });
+    document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('active', i === idx));
   }
 
   function pad(n) { return String(n + 1).padStart(2, '0'); }
 
   function renderQuote(idx) {
-    const qList = quotes[currentLang];
-    const q = qList[idx];
-    document.getElementById('quoteText').textContent = q.text;
+    const quotes = buildQuotes();
+    const q = quotes[idx];
+    document.getElementById('quoteText').textContent   = q.text;
     document.getElementById('quoteAuthor').textContent = '— ' + q.author;
-    document.getElementById('quoteNumber').textContent =
-      `${pad(idx)} / ${pad(qList.length - 1)}`;
+    document.getElementById('quoteNumber').textContent = `${pad(idx)} / ${pad(quotes.length - 1)}`;
+    document.getElementById('mainCard').classList.toggle('custom', !!q.custom);
     updateDots(idx);
   }
 
-  function goTo(idx) {
-    if (isAnimating || idx === current) return;
+  function goTo(idx, force) {
+    const quotes = buildQuotes();
+    if (isAnimating || (!force && idx === current)) return;
     isAnimating = true;
     const inner = document.getElementById('cardInner');
     inner.classList.add('fade-out');
@@ -623,18 +517,80 @@
   }
 
   function nextQuote() {
-    goTo((current + 1) % quotes[currentLang].length);
+    const quotes = buildQuotes();
+    goTo((current + 1) % quotes.length);
   }
 
-  // Initial render
+  // ── Delete custom quote ──
+  function deleteCurrentQuote(e) {
+    e.stopPropagation();
+    const quotes = buildQuotes();
+    const q = quotes[current];
+    if (!q.custom) return;
+    customQuotes = customQuotes.filter(c => !(c.text === q.text && c.author === q.author));
+    persistCustom(customQuotes);
+    const newIdx = Math.min(current, buildQuotes().length - 1);
+    rebuildDots();
+    goTo(newIdx, true);
+  }
+
+  // ── Modal ──
+  function openModal() {
+    document.getElementById('inputText').value        = '';
+    document.getElementById('inputAuthor').value      = '';
+    document.getElementById('modalError').textContent = '';
+    document.getElementById('modalOverlay').classList.add('open');
+    setTimeout(() => document.getElementById('inputText').focus(), 120);
+  }
+
+  function closeModal() {
+    document.getElementById('modalOverlay').classList.remove('open');
+  }
+
+  function overlayClick(e) {
+    if (e.target === document.getElementById('modalOverlay')) closeModal();
+  }
+
+  function saveQuote() {
+    const text   = document.getElementById('inputText').value.trim();
+    const author = document.getElementById('inputAuthor').value.trim();
+    const errEl  = document.getElementById('modalError');
+    if (!text)   { errEl.textContent = 'Please enter a quote.'; return; }
+    if (!author) { errEl.textContent = 'Please enter an author or source.'; return; }
+    errEl.textContent = '';
+    customQuotes.push({ text, author });
+    persistCustom(customQuotes);
+    rebuildDots();
+    closeModal();
+    goTo(buildQuotes().length - 1, true);
+  }
+
+  document.getElementById('inputAuthor').addEventListener('keydown', e => {
+    if (e.key === 'Enter') saveQuote();
+  });
+
+  // ── Keyboard navigation ──
+  document.addEventListener('keydown', e => {
+    const isOpen = document.getElementById('modalOverlay').classList.contains('open');
+    if (e.key === 'Escape' && isOpen) { closeModal(); return; }
+    if (isOpen) return;
+    if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); nextQuote(); }
+    if (e.key === 'ArrowLeft') {
+      const quotes = buildQuotes();
+      goTo((current - 1 + quotes.length) % quotes.length);
+    }
+  });
+
+  // ── Init ──
+  rebuildDots();
   renderQuote(0);
 
   // ── Geometric pattern canvas ──
   const canvas = document.getElementById('pattern');
-  const ctx = canvas.getContext('2d');
+  const ctx    = canvas.getContext('2d');
 
   function resizeCanvas() {
-    canvas.width = window.innerWidth;
+    canvas.width  = window.innerWidth;
     canvas.height = window.innerHeight;
     drawPattern();
   }
@@ -643,224 +599,151 @@
     const W = canvas.width, H = canvas.height;
     ctx.clearRect(0, 0, W, H);
     ctx.strokeStyle = '#c9a84c';
-    ctx.lineWidth = 0.8;
-
+    ctx.lineWidth   = 0.8;
     const size = 80;
     const cols = Math.ceil(W / size) + 2;
     const rows = Math.ceil(H / size) + 2;
-
     for (let r = -1; r < rows; r++) {
       for (let c = -1; c < cols; c++) {
-        const x = c * size;
-        const y = r * size;
-        const cx = x + size / 2;
-        const cy = y + size / 2;
-        const half = size / 2;
-
-        // outer square rotated 45°
+        const x = c * size, y = r * size;
+        const cx = x + size / 2, cy = y + size / 2, half = size / 2;
+        // Outer diamond
         ctx.beginPath();
-        ctx.moveTo(cx, cy - half);
-        ctx.lineTo(cx + half, cy);
-        ctx.lineTo(cx, cy + half);
-        ctx.lineTo(cx - half, cy);
-        ctx.closePath();
-        ctx.stroke();
-
-        // inner smaller diamond
+        ctx.moveTo(cx, cy - half); ctx.lineTo(cx + half, cy);
+        ctx.lineTo(cx, cy + half); ctx.lineTo(cx - half, cy);
+        ctx.closePath(); ctx.stroke();
+        // Inner diamond
         const s2 = half * 0.48;
         ctx.beginPath();
-        ctx.moveTo(cx, cy - s2);
-        ctx.lineTo(cx + s2, cy);
-        ctx.lineTo(cx, cy + s2);
-        ctx.lineTo(cx - s2, cy);
-        ctx.closePath();
-        ctx.stroke();
-
-        // connecting lines to 4 corners
+        ctx.moveTo(cx, cy - s2); ctx.lineTo(cx + s2, cy);
+        ctx.lineTo(cx, cy + s2); ctx.lineTo(cx - s2, cy);
+        ctx.closePath(); ctx.stroke();
+        // Corner lines
         [[x,y],[x+size,y],[x+size,y+size],[x,y+size]].forEach(([px,py]) => {
-          ctx.beginPath();
-          ctx.moveTo(cx, cy - half);
-          ctx.lineTo(cx + half, cy);
-          ctx.lineTo(cx, cy + half);
-          ctx.lineTo(cx - half, cy);
-          ctx.closePath();
-          ctx.stroke();
-
-          // inner smaller diamond
-          const s2 = half * 0.48;
-          ctx.beginPath();
-          ctx.moveTo(cx, cy - s2);
-          ctx.lineTo(cx + s2, cy);
-          ctx.lineTo(cx, cy + s2);
-          ctx.lineTo(cx - s2, cy);
-          ctx.closePath();
-          ctx.stroke();
-
-          // connecting lines to 4 corners
-          [[x, y], [x + size, y], [x + size, y + size], [x, y + size]].forEach(([px, py]) => {
-            ctx.beginPath();
-            ctx.moveTo(cx, cy);
-            ctx.lineTo(px, py);
-            ctx.stroke();
-          });
-        }
-      }
-    }
-
-    window.addEventListener('resize', resizeCanvas);
-    resizeCanvas();
-
-    // ── Keyboard navigation ──
-    document.addEventListener('keydown', e => {
-      if (e.key === 'ArrowRight' || e.key === ' ') nextQuote();
-      if (e.key === 'ArrowLeft') goTo((current - 1 + quotes[currentLang].length) % quotes[currentLang].length);
-    });
-  </script>
-
-  <script>
-    // ── Ambient Rain Audio (Web Audio API) ──
-    let audioCtx = null;
-    let masterGain = null;
-    let isPlaying = false;
-
-    function buildAmbience() {
-      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      masterGain = audioCtx.createGain();
-      masterGain.gain.setValueAtTime(0, audioCtx.currentTime);
-      masterGain.connect(audioCtx.destination);
-
-      // ── Layer 1: Base rain hiss (white noise → bandpass) ──
-      function makeNoise(bufferSeconds) {
-        const frames = audioCtx.sampleRate * bufferSeconds;
-        const buf = audioCtx.createBuffer(2, frames, audioCtx.sampleRate);
-        for (let c = 0; c < 2; c++) {
-          const d = buf.getChannelData(c);
-          for (let i = 0; i < frames; i++) d[i] = Math.random() * 2 - 1;
-        }
-        const src = audioCtx.createBufferSource();
-        src.buffer = buf;
-        src.loop = true;
-        return src;
-      }
-
-      // Heavy rain body — broad noise centred around 1 kHz
-      const rainBody = makeNoise(4);
-      const rainBP = audioCtx.createBiquadFilter();
-      rainBP.type = 'bandpass';
-      rainBP.frequency.value = 1000;
-      rainBP.Q.value = 0.4;
-      const rainBodyGain = audioCtx.createGain();
-      rainBodyGain.gain.value = 0.55;
-      rainBody.connect(rainBP).connect(rainBodyGain).connect(masterGain);
-      rainBody.start();
-
-      // High-frequency drizzle shimmer — thin noise at 5 kHz
-      const drizzle = makeNoise(3);
-      const drizzleBP = audioCtx.createBiquadFilter();
-      drizzleBP.type = 'bandpass';
-      drizzleBP.frequency.value = 5000;
-      drizzleBP.Q.value = 1.2;
-      const drizzleGain = audioCtx.createGain();
-      drizzleGain.gain.value = 0.18;
-      drizzle.connect(drizzleBP).connect(drizzleGain).connect(masterGain);
-      drizzle.start();
-
-      // Low rumble — deep noise below 200 Hz (distant thunder texture)
-      const rumble = makeNoise(6);
-      const rumbleLP = audioCtx.createBiquadFilter();
-      rumbleLP.type = 'lowpass';
-      rumbleLP.frequency.value = 180;
-      const rumbleGain = audioCtx.createGain();
-      rumbleGain.gain.value = 0.35;
-      rumble.connect(rumbleLP).connect(rumbleGain).connect(masterGain);
-      rumble.start();
-
-      // ── Layer 2: Drip rhythm — random individual droplet pops ──
-      function scheduleDrip() {
-        if (!isPlaying) return;
-
-        const osc = audioCtx.createOscillator();
-        const env = audioCtx.createGain();
-        const filter = audioCtx.createBiquadFilter();
-
-        osc.type = 'sine';
-        osc.frequency.value = 400 + Math.random() * 900; // random pitch drip
-
-        filter.type = 'bandpass';
-        filter.frequency.value = osc.frequency.value;
-        filter.Q.value = 8;
-
-        const now = audioCtx.currentTime;
-        env.gain.setValueAtTime(0, now);
-        env.gain.linearRampToValueAtTime(0.08 + Math.random() * 0.06, now + 0.005);
-        env.gain.exponentialRampToValueAtTime(0.0001, now + 0.18 + Math.random() * 0.15);
-
-        osc.connect(filter).connect(env).connect(masterGain);
-        osc.start(now);
-        osc.stop(now + 0.4);
-
-        // next drip in 80–400 ms (dense but irregular)
-        const next = 80 + Math.random() * 320;
-        setTimeout(scheduleDrip, next);
-      }
-
-      // ── Layer 3: Slow swell — gentle volume breathing ──
-      function swell() {
-        if (!isPlaying) return;
-        const now = audioCtx.currentTime;
-        const swellGain = 0.85 + Math.random() * 0.15;
-        rainBodyGain.gain.linearRampToValueAtTime(swellGain, now + 4 + Math.random() * 3);
-        setTimeout(swell, (5 + Math.random() * 4) * 1000);
-      }
-
-      // Start drips and swell after context resumes
-      audioCtx.resume().then(() => {
-        scheduleDrip();
-        swell();
-      });
-    }
-
-    function toggleAudio() {
-      const btn = document.getElementById('audioBtn');
-      const label = document.getElementById('audioLabel');
-
-      if (!audioCtx) buildAmbience();
-
-      if (!isPlaying) {
-        isPlaying = true;
-        audioCtx.resume().then(() => {
-          masterGain.gain.cancelScheduledValues(audioCtx.currentTime);
-          masterGain.gain.setValueAtTime(0, audioCtx.currentTime);
-          masterGain.gain.linearRampToValueAtTime(1, audioCtx.currentTime + 3);
+          ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(px, py); ctx.stroke();
         });
-        btn.classList.add('playing');
-        label.textContent = 'Ambient';
-        document.getElementById('mutedX1').style.display = 'none';
-        document.getElementById('mutedX2').style.display = 'none';
-        document.getElementById('wave1').style.display = '';
-        document.getElementById('wave2').style.display = '';
-      } else {
-        isPlaying = false;
-        masterGain.gain.cancelScheduledValues(audioCtx.currentTime);
-        masterGain.gain.setValueAtTime(masterGain.gain.value, audioCtx.currentTime);
-        masterGain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 2);
-        setTimeout(() => audioCtx.suspend(), 2100);
-        btn.classList.remove('playing');
-        label.textContent = 'Silence';
-        document.getElementById('mutedX1').style.display = '';
-        document.getElementById('mutedX2').style.display = '';
-        document.getElementById('wave1').style.display = 'none';
-        document.getElementById('wave2').style.display = 'none';
       }
     }
-  </script>
+  }
 
-  // ── Keyboard navigation ──
-  document.addEventListener('keydown', e => {
-    if (e.key === 'ArrowRight' || e.key === ' ') nextQuote();
-    if (e.key === 'ArrowLeft') goTo((current - 1 + quotes[currentLang].length) % quotes[currentLang].length);
-  });
+  window.addEventListener('resize', resizeCanvas);
+  resizeCanvas();
+
+  // ── Ambient Rain Audio (Web Audio API) ──
+  let audioCtx   = null;
+  let masterGain = null;
+  let isPlaying  = false;
+
+  function buildAmbience() {
+    audioCtx   = new (window.AudioContext || window.webkitAudioContext)();
+    masterGain = audioCtx.createGain();
+    masterGain.gain.setValueAtTime(0, audioCtx.currentTime);
+    masterGain.connect(audioCtx.destination);
+
+    function makeNoise(bufferSeconds) {
+      const frames = audioCtx.sampleRate * bufferSeconds;
+      const buf = audioCtx.createBuffer(2, frames, audioCtx.sampleRate);
+      for (let c = 0; c < 2; c++) {
+        const d = buf.getChannelData(c);
+        for (let i = 0; i < frames; i++) d[i] = Math.random() * 2 - 1;
+      }
+      const src = audioCtx.createBufferSource();
+      src.buffer = buf; src.loop = true;
+      return src;
+    }
+
+    // Rain body
+    const rainBody   = makeNoise(4);
+    const rainBP     = audioCtx.createBiquadFilter();
+    rainBP.type      = 'bandpass';
+    rainBP.frequency.value = 1000;
+    rainBP.Q.value   = 0.4;
+    const rainBodyGain = audioCtx.createGain();
+    rainBodyGain.gain.value = 0.55;
+    rainBody.connect(rainBP).connect(rainBodyGain).connect(masterGain);
+    rainBody.start();
+
+    // Drizzle shimmer
+    const drizzle   = makeNoise(3);
+    const drizzleBP = audioCtx.createBiquadFilter();
+    drizzleBP.type  = 'bandpass';
+    drizzleBP.frequency.value = 5000;
+    drizzleBP.Q.value = 1.2;
+    const drizzleGain = audioCtx.createGain();
+    drizzleGain.gain.value = 0.18;
+    drizzle.connect(drizzleBP).connect(drizzleGain).connect(masterGain);
+    drizzle.start();
+
+    // Low rumble
+    const rumble   = makeNoise(6);
+    const rumbleLP = audioCtx.createBiquadFilter();
+    rumbleLP.type  = 'lowpass';
+    rumbleLP.frequency.value = 180;
+    const rumbleGain = audioCtx.createGain();
+    rumbleGain.gain.value = 0.35;
+    rumble.connect(rumbleLP).connect(rumbleGain).connect(masterGain);
+    rumble.start();
+
+    // Individual drip pops
+    function scheduleDrip() {
+      if (!isPlaying) return;
+      const osc    = audioCtx.createOscillator();
+      const env    = audioCtx.createGain();
+      const filter = audioCtx.createBiquadFilter();
+      osc.type = 'sine';
+      osc.frequency.value = 400 + Math.random() * 900;
+      filter.type = 'bandpass';
+      filter.frequency.value = osc.frequency.value;
+      filter.Q.value = 8;
+      const now = audioCtx.currentTime;
+      env.gain.setValueAtTime(0, now);
+      env.gain.linearRampToValueAtTime(0.08 + Math.random() * 0.06, now + 0.005);
+      env.gain.exponentialRampToValueAtTime(0.0001, now + 0.18 + Math.random() * 0.15);
+      osc.connect(filter).connect(env).connect(masterGain);
+      osc.start(now); osc.stop(now + 0.4);
+      setTimeout(scheduleDrip, 80 + Math.random() * 320);
+    }
+
+    // Slow swell
+    function swell() {
+      if (!isPlaying) return;
+      const now = audioCtx.currentTime;
+      rainBodyGain.gain.linearRampToValueAtTime(0.85 + Math.random() * 0.15, now + 4 + Math.random() * 3);
+      setTimeout(swell, (5 + Math.random() * 4) * 1000);
+    }
+
+    audioCtx.resume().then(() => { scheduleDrip(); swell(); });
+  }
+
+  function toggleAudio() {
+    if (!audioCtx) buildAmbience();
+    if (!isPlaying) {
+      isPlaying = true;
+      audioCtx.resume().then(() => {
+        masterGain.gain.cancelScheduledValues(audioCtx.currentTime);
+        masterGain.gain.setValueAtTime(0, audioCtx.currentTime);
+        masterGain.gain.linearRampToValueAtTime(1, audioCtx.currentTime + 3);
+      });
+      document.getElementById('audioBtn').classList.add('playing');
+      document.getElementById('audioLabel').textContent = 'Ambient';
+      document.getElementById('mutedX1').style.display = 'none';
+      document.getElementById('mutedX2').style.display = 'none';
+      document.getElementById('wave1').style.display   = '';
+      document.getElementById('wave2').style.display   = '';
+    } else {
+      isPlaying = false;
+      masterGain.gain.cancelScheduledValues(audioCtx.currentTime);
+      masterGain.gain.setValueAtTime(masterGain.gain.value, audioCtx.currentTime);
+      masterGain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 2);
+      setTimeout(() => audioCtx.suspend(), 2100);
+      document.getElementById('audioBtn').classList.remove('playing');
+      document.getElementById('audioLabel').textContent = 'Silence';
+      document.getElementById('mutedX1').style.display = '';
+      document.getElementById('mutedX2').style.display = '';
+      document.getElementById('wave1').style.display   = 'none';
+      document.getElementById('wave2').style.display   = 'none';
+    }
+  }
 </script>
 </body>
-
 </html>
