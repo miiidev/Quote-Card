@@ -86,6 +86,39 @@
       text-transform: uppercase;
     }
 
+    .language-selector {
+      margin-top: 1.2rem;
+      display: flex;
+      gap: 0.8rem;
+      justify-content: center;
+      animation: fadeDown 1s ease 0.15s both;
+    }
+
+    .lang-btn {
+      font-family: 'Cinzel', serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+      background: transparent;
+      border: 1px solid var(--border);
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+      transition: background 0.3s, border-color 0.3s, color 0.3s;
+      border-radius: 2px;
+    }
+
+    .lang-btn:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+
+    .lang-btn.active {
+      background: var(--accent);
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+
     header .divider {
       margin: 0.6rem auto;
       width: 60px;
@@ -377,6 +410,35 @@
         inset: -10px;
       }
     }
+
+    /* ── RTL Support for Arabic ── */
+    body.rtl {
+      direction: rtl;
+      text-align: right;
+    }
+
+    body.rtl blockquote::before {
+      content: '\201D';
+      margin-right: 0;
+      margin-left: 0.1rem;
+    }
+
+    body.rtl .hint {
+      right: auto;
+      left: 18px;
+    }
+
+    body.rtl .card::before {
+      left: auto;
+      right: 12px;
+      border-width: 1px 1px 0 0;
+    }
+
+    body.rtl .card::after {
+      right: auto;
+      left: 12px;
+      border-width: 0 0 1px 1px;
+    }
   </style>
 </head>
 
@@ -404,193 +466,218 @@
       <span class="hint" id="cardHint">click to reveal</span>
     </div>
 
-    <div class="dots" id="dots"></div>
+<div class="container">
+  <header>
+    <h1 id="headerTitle">Reflections</h1>
+    <div class="divider"></div>
+    <div class="language-selector">
+      <button class="lang-btn active" data-lang="en" onclick="switchLanguage('en')">English</button>
+      <button class="lang-btn" data-lang="ms" onclick="switchLanguage('ms')">Malay</button>
+      <button class="lang-btn" data-lang="ar" onclick="switchLanguage('ar')">العربية</button>
+    </div>
+  </header>
 
-    <button class="btn" onclick="nextQuote()" id="nextBtn">Next Reflection</button>
+  <div class="card" onclick="nextQuote()" title="Click for next quote">
+    <div class="card-inner" id="cardInner">
+      <span class="quote-number" id="quoteNumber">01 / 08</span>
+      <blockquote id="quoteText"></blockquote>
+      <div class="attribution" id="quoteAuthor"></div>
+    </div>
+    <span class="hint" id="cardHint">click to reveal</span>
   </div>
 
-  <button class="audio-btn" id="audioBtn" onclick="toggleAudio()" title="Toggle ambient sound">
-    <svg id="audioIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
-      stroke-linejoin="round">
-      <!-- speaker base -->
-      <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
-      <!-- muted lines (shown when off) -->
-      <line id="mutedX1" x1="23" y1="9" x2="17" y2="15" />
-      <line id="mutedX2" x1="17" y1="9" x2="23" y2="15" />
-      <!-- waves (hidden when off) -->
-      <path id="wave1" d="M15.54 8.46a5 5 0 0 1 0 7.07" style="display:none" />
-      <path id="wave2" d="M19.07 4.93a10 10 0 0 1 0 14.14" style="display:none" />
-    </svg>
-    <span id="audioLabel">Silence</span>
-  </button>
+  <div class="dots" id="dots"></div>
 
-  <script>
-    const translations = {
-      en: {
-        title: 'Reflections',
-        nextBtn: 'Next Reflection',
-        hint: 'click to reveal'
-      },
-      ms: {
-        title: 'Renungan',
-        nextBtn: 'Renungan Seterusnya',
-        hint: 'klik untuk melihat'
-      },
-      ar: {
-        title: 'تأملات',
-        nextBtn: 'التأمل التالي',
-        hint: 'اضغط للكشف'
-      }
-    };
+  <button class="btn" onclick="nextQuote()" id="nextBtn">Next Reflection</button>
+</div>
 
-    const quotes = {
-      en: [
-        { text: "The more you know yourself, the more clarity there is. Self-knowledge has no end.", author: "Jiddu Krishnamurti" },
-        { text: "Whoever knows himself knows his Lord.", author: "Traditional Saying" },
-        { text: "Do not lose hope, nor be sad.", author: "Quran 3:139" },
-        { text: "The beginning of wisdom is to call things by their proper name.", author: "Confucius" },
-        { text: "He who has a why to live can bear almost any how.", author: "Friedrich Nietzsche" },
-        { text: "Simplicity is the ultimate sophistication.", author: "Leonardo da Vinci" },
-        { text: "The soul that sees beauty may sometimes walk alone.", author: "Johann Wolfgang von Goethe" },
-        { text: "In the middle of difficulty lies opportunity.", author: "Albert Einstein" }
-      ],
-      ms: [
-        { text: "Semakin anda mengenali diri anda, semakin jelas segalanya. Pengenalan diri tiada penghujungnya.", author: "Jiddu Krishnamurti" },
-        { text: "Sesiapa yang mengenal dirinya akan mengenal Tuhannya.", author: "Pepatah Tradisional" },
-        { text: "Janganlah kamu bersikap lemah, dan janganlah (pula) kamu bersedih hati.", author: "Al-Quran 3:139" },
-        { text: "Permulaan kebijaksanaan adalah memanggil sesuatu dengan nama yang sebenar.", author: "Confucius" },
-        { text: "Sesiapa yang mempunyai 'sebab' untuk hidup boleh menanggung apa sahaja 'bagaimana' ia berlaku.", author: "Friedrich Nietzsche" },
-        { text: "Kesederhanaan adalah kecanggihan yang mutlak.", author: "Leonardo da Vinci" },
-        { text: "Jiwa yang melihat keindahan kadangkala perlu berjalan sendirian.", author: "Johann Wolfgang von Goethe" },
-        { text: "Di tengah-tengah kesukaran terdapatnya peluang.", author: "Albert Einstein" }
-      ],
-      ar: [
-        { text: "كلما عرفت نفسك أكثر، كلما زاد الوضوح. معرفة الذات ليس لها نهاية.", author: "جيدو كريشنامورتي" },
-        { text: "من عرف نفسه فقد عرف ربه.", author: "قول مأثور" },
-        { text: "وَلَا تَهِنُوا وَلَا تَحْزَنُوا", author: "القرآن ٣:١٣٩" },
-        { text: "بداية الحكمة هي تسمية الأشياء بأسمائها الحقيقية.", author: "كونفوشيوس" },
-        { text: "من لديه سبب للعيش يمكنه أن يتحمل أي طريقة تقريباً.", author: "فريدريك نيتشه" },
-        { text: "البساطة هي أقصى درجات التطور.", author: "ليوناردو دا فينشي" },
-        { text: "الروح التي ترى الجمال قد تمشي وحيدة في بعض الأحيان.", author: "يوهان فولفغانغ فون غوته" },
-        { text: "في وسط الصعوبة تكمن الفرصة.", author: "ألبرت أينشتاين" }
-      ]
-    };
-
-    let current = 0;
-    let isAnimating = false;
-    let currentLang = 'en';
-
-    // ── Language Switching ──
-    function switchLanguage(lang) {
-      if (lang === currentLang) return;
-      currentLang = lang;
-
-      // Update active button
-      document.querySelectorAll('.lang-btn').forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.lang === lang);
-      });
-
-      // Update RTL for Arabic
-      if (lang === 'ar') {
-        document.body.classList.add('rtl');
-      } else {
-        document.body.classList.remove('rtl');
-      }
-
-      // Update UI text
-      updateUIText();
-
-      const inner = document.getElementById('cardInner');
-      inner.classList.add('fade-out');
-      setTimeout(() => {
-        renderQuote(current);
-        inner.classList.remove('fade-out');
-      }, 350);
+<script>
+  const translations = {
+    en: {
+      title: 'Reflections',
+      nextBtn: 'Next Reflection',
+      hint: 'click to reveal'
+    },
+    ms: {
+      title: 'Renungan',
+      nextBtn: 'Renungan Seterusnya',
+      hint: 'klik untuk melihat'
+    },
+    ar: {
+      title: 'تأملات',
+      nextBtn: 'التأمل التالي',
+      hint: 'اضغط للكشف'
     }
+  };
 
-    function updateUIText() {
-      const t = translations[currentLang];
-      document.getElementById('headerTitle').textContent = t.title;
-      document.getElementById('nextBtn').textContent = t.nextBtn;
-      document.getElementById('cardHint').textContent = t.hint;
-    }
+  const quotes = {
+    en: [
+      { text: "The more you know yourself, the more clarity there is. Self-knowledge has no end.", author: "Jiddu Krishnamurti" },
+      { text: "Whoever knows himself knows his Lord.", author: "Traditional Saying" },
+      { text: "Do not lose hope, nor be sad.", author: "Quran 3:139" },
+      { text: "The beginning of wisdom is to call things by their proper name.", author: "Confucius" },
+      { text: "He who has a why to live can bear almost any how.", author: "Friedrich Nietzsche" },
+      { text: "Simplicity is the ultimate sophistication.", author: "Leonardo da Vinci" },
+      { text: "The soul that sees beauty may sometimes walk alone.", author: "Johann Wolfgang von Goethe" },
+      { text: "In the middle of difficulty lies opportunity.", author: "Albert Einstein" }
+    ],
+    ms: [
+      { text: "Semakin anda mengenali diri anda, semakin jelas segalanya. Pengenalan diri tiada penghujungnya.", author: "Jiddu Krishnamurti" },
+      { text: "Sesiapa yang mengenal dirinya akan mengenal Tuhannya.", author: "Pepatah Tradisional" },
+      { text: "Janganlah kamu bersikap lemah, dan janganlah (pula) kamu bersedih hati.", author: "Al-Quran 3:139" },
+      { text: "Permulaan kebijaksanaan adalah memanggil sesuatu dengan nama yang sebenar.", author: "Confucius" },
+      { text: "Sesiapa yang mempunyai 'sebab' untuk hidup boleh menanggung apa sahaja 'bagaimana' ia berlaku.", author: "Friedrich Nietzsche" },
+      { text: "Kesederhanaan adalah kecanggihan yang mutlak.", author: "Leonardo da Vinci" },
+      { text: "Jiwa yang melihat keindahan kadangkala perlu berjalan sendirian.", author: "Johann Wolfgang von Goethe" },
+      { text: "Di tengah-tengah kesukaran terdapatnya peluang.", author: "Albert Einstein" }
+    ],
+    ar: [
+      { text: "كلما عرفت نفسك أكثر، كلما زاد الوضوح. معرفة الذات ليس لها نهاية.", author: "جيدو كريشنامورتي" },
+      { text: "من عرف نفسه فقد عرف ربه.", author: "قول مأثور" },
+      { text: "وَلَا تَهِنُوا وَلَا تَحْزَنُوا", author: "القرآن ٣:١٣٩" },
+      { text: "بداية الحكمة هي تسمية الأشياء بأسمائها الحقيقية.", author: "كونفوشيوس" },
+      { text: "من لديه سبب للعيش يمكنه أن يتحمل أي طريقة تقريباً.", author: "فريدريك نيتشه" },
+      { text: "البساطة هي أقصى درجات التطور.", author: "ليوناردو دا فينشي" },
+      { text: "الروح التي ترى الجمال قد تمشي وحيدة في بعض الأحيان.", author: "يوهان فولفغانغ فون غوته" },
+      { text: "في وسط الصعوبة تكمن الفرصة.", author: "ألبرت أينشتاين" }
+    ]
+  };
 
-    // ── Dots ──
-    const dotsEl = document.getElementById('dots');
-    quotes[currentLang].forEach((_, i) => {
-      const d = document.createElement('div');
-      d.className = 'dot' + (i === 0 ? ' active' : '');
-      d.onclick = () => goTo(i);
-      dotsEl.appendChild(d);
+  let current = 0;
+  let isAnimating = false;
+  let currentLang = 'en';
+
+  // ── Language Switching ──
+  function switchLanguage(lang) {
+    if (lang === currentLang) return;
+    currentLang = lang;
+    
+    // Update active button
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.lang === lang);
     });
 
-    function updateDots(idx) {
-      document.querySelectorAll('.dot').forEach((d, i) => {
-        d.classList.toggle('active', i === idx);
-      });
+    // Update RTL for Arabic
+    if (lang === 'ar') {
+      document.body.classList.add('rtl');
+    } else {
+      document.body.classList.remove('rtl');
     }
 
-    function pad(n) { return String(n + 1).padStart(2, '0'); }
+    // Update UI text
+    updateUIText();
+    
+    const inner = document.getElementById('cardInner');
+    inner.classList.add('fade-out');
+    setTimeout(() => {
+      renderQuote(current);
+      inner.classList.remove('fade-out');
+    }, 350);
+  }
 
-    function renderQuote(idx) {
-      const qList = quotes[currentLang];
-      const q = qList[idx];
-      document.getElementById('quoteText').textContent = q.text;
-      document.getElementById('quoteAuthor').textContent = '— ' + q.author;
-      document.getElementById('quoteNumber').textContent =
-        `${pad(idx)} / ${pad(qList.length - 1)}`;
-      updateDots(idx);
-    }
+  function updateUIText() {
+    const t = translations[currentLang];
+    document.getElementById('headerTitle').textContent = t.title;
+    document.getElementById('nextBtn').textContent = t.nextBtn;
+    document.getElementById('cardHint').textContent = t.hint;
+  }
 
-    function goTo(idx) {
-      if (isAnimating || idx === current) return;
-      isAnimating = true;
-      const inner = document.getElementById('cardInner');
-      inner.classList.add('fade-out');
-      setTimeout(() => {
-        current = idx;
-        renderQuote(current);
-        inner.classList.remove('fade-out');
-        isAnimating = false;
-      }, 350);
-    }
+  // ── Dots ──
+  const dotsEl = document.getElementById('dots');
+  quotes[currentLang].forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i === 0 ? ' active' : '');
+    d.onclick = () => goTo(i);
+    dotsEl.appendChild(d);
+  });
 
-    function nextQuote() {
-      goTo((current + 1) % quotes[currentLang].length);
-    }
+  function updateDots(idx) {
+    document.querySelectorAll('.dot').forEach((d, i) => {
+      d.classList.toggle('active', i === idx);
+    });
+  }
 
-    // Initial render
-    renderQuote(0);
+  function pad(n) { return String(n + 1).padStart(2, '0'); }
 
-    // ── Geometric pattern canvas ──
-    const canvas = document.getElementById('pattern');
-    const ctx = canvas.getContext('2d');
+  function renderQuote(idx) {
+    const qList = quotes[currentLang];
+    const q = qList[idx];
+    document.getElementById('quoteText').textContent = q.text;
+    document.getElementById('quoteAuthor').textContent = '— ' + q.author;
+    document.getElementById('quoteNumber').textContent =
+      `${pad(idx)} / ${pad(qList.length - 1)}`;
+    updateDots(idx);
+  }
 
-    function resizeCanvas() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-      drawPattern();
-    }
+  function goTo(idx) {
+    if (isAnimating || idx === current) return;
+    isAnimating = true;
+    const inner = document.getElementById('cardInner');
+    inner.classList.add('fade-out');
+    setTimeout(() => {
+      current = idx;
+      renderQuote(current);
+      inner.classList.remove('fade-out');
+      isAnimating = false;
+    }, 350);
+  }
 
-    function drawPattern() {
-      const W = canvas.width, H = canvas.height;
-      ctx.clearRect(0, 0, W, H);
-      ctx.strokeStyle = '#c9a84c';
-      ctx.lineWidth = 0.8;
+  function nextQuote() {
+    goTo((current + 1) % quotes[currentLang].length);
+  }
 
-      const size = 80;
-      const cols = Math.ceil(W / size) + 2;
-      const rows = Math.ceil(H / size) + 2;
+  // Initial render
+  renderQuote(0);
 
-      for (let r = -1; r < rows; r++) {
-        for (let c = -1; c < cols; c++) {
-          const x = c * size;
-          const y = r * size;
-          const cx = x + size / 2;
-          const cy = y + size / 2;
-          const half = size / 2;
+  // ── Geometric pattern canvas ──
+  const canvas = document.getElementById('pattern');
+  const ctx = canvas.getContext('2d');
 
-          // outer square rotated 45°
+  function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    drawPattern();
+  }
+
+  function drawPattern() {
+    const W = canvas.width, H = canvas.height;
+    ctx.clearRect(0, 0, W, H);
+    ctx.strokeStyle = '#c9a84c';
+    ctx.lineWidth = 0.8;
+
+    const size = 80;
+    const cols = Math.ceil(W / size) + 2;
+    const rows = Math.ceil(H / size) + 2;
+
+    for (let r = -1; r < rows; r++) {
+      for (let c = -1; c < cols; c++) {
+        const x = c * size;
+        const y = r * size;
+        const cx = x + size / 2;
+        const cy = y + size / 2;
+        const half = size / 2;
+
+        // outer square rotated 45°
+        ctx.beginPath();
+        ctx.moveTo(cx, cy - half);
+        ctx.lineTo(cx + half, cy);
+        ctx.lineTo(cx, cy + half);
+        ctx.lineTo(cx - half, cy);
+        ctx.closePath();
+        ctx.stroke();
+
+        // inner smaller diamond
+        const s2 = half * 0.48;
+        ctx.beginPath();
+        ctx.moveTo(cx, cy - s2);
+        ctx.lineTo(cx + s2, cy);
+        ctx.lineTo(cx, cy + s2);
+        ctx.lineTo(cx - s2, cy);
+        ctx.closePath();
+        ctx.stroke();
+
+        // connecting lines to 4 corners
+        [[x,y],[x+size,y],[x+size,y+size],[x,y+size]].forEach(([px,py]) => {
           ctx.beginPath();
           ctx.moveTo(cx, cy - half);
           ctx.lineTo(cx + half, cy);
@@ -768,6 +855,12 @@
     }
   </script>
 
+  // ── Keyboard navigation ──
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === ' ') nextQuote();
+    if (e.key === 'ArrowLeft') goTo((current - 1 + quotes[currentLang].length) % quotes[currentLang].length);
+  });
+</script>
 </body>
 
 </html>
