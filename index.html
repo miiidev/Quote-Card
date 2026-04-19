@@ -218,6 +218,58 @@
       from { opacity: 0; transform: translateY(16px); }
       to   { opacity: 1; transform: translateY(0); }
     }
+
+    /* ── Audio toggle ── */
+    .audio-btn {
+      position: fixed;
+      top: 1.5rem;
+      right: 1.5rem;
+      z-index: 10;
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      padding: 0.55rem 0.75rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: 'Cinzel', serif;
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      color: var(--muted);
+      text-transform: uppercase;
+      transition: border-color 0.3s, color 0.3s, background 0.3s;
+      animation: fadeDown 1s ease 0.8s both;
+    }
+    .audio-btn:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+      background: var(--accent);
+    }
+    .audio-btn.playing {
+      border-color: rgba(201,168,76,0.4);
+      color: var(--gold);
+    }
+    .audio-btn svg {
+      width: 13px;
+      height: 13px;
+      flex-shrink: 0;
+    }
+    /* ripple ring when playing */
+    .audio-btn.playing::after {
+      content: '';
+      position: absolute;
+      inset: -4px;
+      border-radius: 3px;
+      border: 1px solid var(--gold);
+      opacity: 0;
+      animation: audioRing 2.5s ease-out infinite;
+    }
+    @keyframes audioRing {
+      0%   { opacity: 0.5; inset: -2px; }
+      100% { opacity: 0;   inset: -10px; }
+    }
+
   </style>
 </head>
 <body>
@@ -243,6 +295,19 @@
 
   <button class="btn" onclick="nextQuote()">Next Reflection</button>
 </div>
+<button class="audio-btn" id="audioBtn" onclick="toggleAudio()" title="Toggle ambient sound">
+  <svg id="audioIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <!-- speaker base -->
+    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+    <!-- muted lines (shown when off) -->
+    <line id="mutedX1" x1="23" y1="9" x2="17" y2="15"/>
+    <line id="mutedX2" x1="17" y1="9" x2="23" y2="15"/>
+    <!-- waves (hidden when off) -->
+    <path id="wave1" d="M15.54 8.46a5 5 0 0 1 0 7.07" style="display:none"/>
+    <path id="wave2" d="M19.07 4.93a10 10 0 0 1 0 14.14" style="display:none"/>
+  </svg>
+  <span id="audioLabel">Silence</span>
+</button>
 
 <script>
   const quotes = [
@@ -395,6 +460,106 @@
     if (e.key === 'ArrowRight' || e.key === ' ') nextQuote();
     if (e.key === 'ArrowLeft') goTo((current - 1 + quotes.length) % quotes.length);
   });
+
+  // ── Ambient Audio (Web Audio API) ──
+let audioCtx = null;
+let masterGain = null;
+let isPlaying = false;
+const nodes = [];
+
+function buildAmbience() {
+  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  masterGain = audioCtx.createGain();
+  masterGain.gain.setValueAtTime(0, audioCtx.currentTime);
+  masterGain.connect(audioCtx.destination);
+
+  // Layer 1 — brown noise (warmth)
+  function brownNoise() {
+    const bufferSize = audioCtx.sampleRate * 4;
+    const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+    const data = buffer.getChannelData(0);
+    let lastOut = 0;
+    for (let i = 0; i < bufferSize; i++) {
+      const white = Math.random() * 2 - 1;
+      data[i] = (lastOut + 0.02 * white) / 1.02;
+      lastOut = data[i];
+      data[i] *= 3.5;
+    }
+    const src = audioCtx.createBufferSource();
+    src.buffer = buffer;
+    src.loop = true;
+    const g = audioCtx.createGain();
+    g.gain.value = 0.18;
+    src.connect(g).connect(masterGain);
+    src.start();
+    nodes.push(src);
+  }
+
+  // Layer 2 — slow sine drones (meditative hum)
+  function sineLayer(freq, gainVal, lfoFreq, lfoDepth) {
+    const osc = audioCtx.createOscillator();
+    osc.type = 'sine';
+    osc.frequency.value = freq;
+
+    const lfo = audioCtx.createOscillator();
+    lfo.frequency.value = lfoFreq;
+    const lfoGain = audioCtx.createGain();
+    lfoGain.gain.value = lfoDepth;
+    lfo.connect(lfoGain).connect(osc.frequency);
+
+    const g = audioCtx.createGain();
+    g.gain.value = gainVal;
+
+    // soft low-pass
+    const filter = audioCtx.createBiquadFilter();
+    filter.type = 'lowpass';
+    filter.frequency.value = 500;
+
+    osc.connect(filter).connect(g).connect(masterGain);
+    osc.start(); lfo.start();
+    nodes.push(osc, lfo);
+  }
+
+  brownNoise();
+  sineLayer(60,  0.06, 0.04, 0.8);   // deep sub tone
+  sineLayer(120, 0.04, 0.03, 0.5);   // warm octave
+  sineLayer(180, 0.025, 0.07, 0.3);  // gentle harmonic
+  sineLayer(240, 0.015, 0.05, 0.2);  // air
+}
+
+function toggleAudio() {
+  const btn = document.getElementById('audioBtn');
+  const label = document.getElementById('audioLabel');
+
+  if (!audioCtx) buildAmbience();
+
+  if (!isPlaying) {
+    audioCtx.resume();
+    masterGain.gain.cancelScheduledValues(audioCtx.currentTime);
+    masterGain.gain.setValueAtTime(masterGain.gain.value, audioCtx.currentTime);
+    masterGain.gain.linearRampToValueAtTime(1, audioCtx.currentTime + 2.5); // slow fade in
+    isPlaying = true;
+    btn.classList.add('playing');
+    label.textContent = 'Ambient';
+    // swap icon to waves
+    document.getElementById('mutedX1').style.display = 'none';
+    document.getElementById('mutedX2').style.display = 'none';
+    document.getElementById('wave1').style.display = '';
+    document.getElementById('wave2').style.display = '';
+  } else {
+    masterGain.gain.cancelScheduledValues(audioCtx.currentTime);
+    masterGain.gain.setValueAtTime(masterGain.gain.value, audioCtx.currentTime);
+    masterGain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 1.5); // slow fade out
+    setTimeout(() => audioCtx.suspend(), 1600);
+    isPlaying = false;
+    btn.classList.remove('playing');
+    label.textContent = 'Silence';
+    document.getElementById('mutedX1').style.display = '';
+    document.getElementById('mutedX2').style.display = '';
+    document.getElementById('wave1').style.display = 'none';
+    document.getElementById('wave2').style.display = 'none';
+  }
+}
 </script>
 </body>
 </html>
