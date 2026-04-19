@@ -1,12 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Reflections</title>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Cinzel:wght@400;500&display=swap" rel="stylesheet"/>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Cinzel:wght@400;500&display=swap"
+    rel="stylesheet" />
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
     :root {
       --bg: #0d0d0f;
@@ -46,7 +55,7 @@
       content: '';
       position: fixed;
       inset: 0;
-      background: radial-gradient(ellipse 60% 50% at 50% 50%, rgba(201,168,76,0.08) 0%, transparent 70%);
+      background: radial-gradient(ellipse 60% 50% at 50% 50%, rgba(201, 168, 76, 0.08) 0%, transparent 70%);
       pointer-events: none;
       z-index: 0;
     }
@@ -98,23 +107,38 @@
       transition: border-color 0.3s;
     }
 
-    .card:hover { border-color: rgba(180, 150, 90, 0.5); }
+    .card:hover {
+      border-color: rgba(180, 150, 90, 0.5);
+    }
 
     /* corner ornaments */
-    .card::before, .card::after {
+    .card::before,
+    .card::after {
       content: '';
       position: absolute;
-      width: 20px; height: 20px;
+      width: 20px;
+      height: 20px;
       border-color: var(--gold);
       border-style: solid;
       opacity: 0.5;
     }
-    .card::before { top: 12px; left: 12px; border-width: 1px 0 0 1px; }
-    .card::after  { bottom: 12px; right: 12px; border-width: 0 1px 1px 0; }
+
+    .card::before {
+      top: 12px;
+      left: 12px;
+      border-width: 1px 0 0 1px;
+    }
+
+    .card::after {
+      bottom: 12px;
+      right: 12px;
+      border-width: 0 1px 1px 0;
+    }
 
     .card-inner {
       transition: opacity 0.35s ease, transform 0.35s ease;
     }
+
     .card-inner.fade-out {
       opacity: 0;
       transform: translateY(6px);
@@ -176,12 +200,14 @@
     }
 
     .dot {
-      width: 5px; height: 5px;
+      width: 5px;
+      height: 5px;
       border-radius: 50%;
       background: var(--muted);
       transition: background 0.3s, transform 0.3s;
       cursor: pointer;
     }
+
     .dot.active {
       background: var(--gold);
       transform: scale(1.4);
@@ -202,21 +228,40 @@
       animation: fadeUp 1s ease 0.6s both;
       border-radius: 2px;
     }
+
     .btn:hover {
       background: var(--accent);
       border-color: var(--gold);
       color: var(--gold-light);
     }
-    .btn:active { transform: scale(0.98); }
+
+    .btn:active {
+      transform: scale(0.98);
+    }
 
     /* ── Animations ── */
     @keyframes fadeDown {
-      from { opacity: 0; transform: translateY(-16px); }
-      to   { opacity: 1; transform: translateY(0); }
+      from {
+        opacity: 0;
+        transform: translateY(-16px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
+
     @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(16px); }
-      to   { opacity: 1; transform: translateY(0); }
+      from {
+        opacity: 0;
+        transform: translateY(16px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     /* ── Audio toggle ── */
@@ -270,296 +315,459 @@
       100% { opacity: 0;   inset: -10px; }
     }
 
-  </style>
-</head>
-<body>
-
-<canvas id="pattern"></canvas>
-
-<div class="container">
-  <header>
-    <h1>Reflections</h1>
-    <div class="divider"></div>
-  </header>
-
-  <div class="card" onclick="nextQuote()" title="Click for next quote">
-    <div class="card-inner" id="cardInner">
-      <span class="quote-number" id="quoteNumber">01 / 08</span>
-      <blockquote id="quoteText"></blockquote>
-      <div class="attribution" id="quoteAuthor"></div>
-    </div>
-    <span class="hint">click to reveal</span>
-  </div>
-
-  <div class="dots" id="dots"></div>
-
-  <button class="btn" onclick="nextQuote()">Next Reflection</button>
-</div>
-<button class="audio-btn" id="audioBtn" onclick="toggleAudio()" title="Toggle ambient sound">
-  <svg id="audioIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-    <!-- speaker base -->
-    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
-    <!-- muted lines (shown when off) -->
-    <line id="mutedX1" x1="23" y1="9" x2="17" y2="15"/>
-    <line id="mutedX2" x1="17" y1="9" x2="23" y2="15"/>
-    <!-- waves (hidden when off) -->
-    <path id="wave1" d="M15.54 8.46a5 5 0 0 1 0 7.07" style="display:none"/>
-    <path id="wave2" d="M19.07 4.93a10 10 0 0 1 0 14.14" style="display:none"/>
-  </svg>
-  <span id="audioLabel">Silence</span>
-</button>
-
-<script>
-  const quotes = [
-    {
-      text: "The more you know yourself, the more clarity there is. Self-knowledge has no end.",
-      author: "Jiddu Krishnamurti"
-    },
-    {
-      text: "Whoever knows himself knows his Lord.",
-      author: "Traditional Saying"
-    },
-    {
-      text: "Do not lose hope, nor be sad.",
-      author: "Quran 3:139"
-    },
-    {
-      text: "The beginning of wisdom is to call things by their proper name.",
-      author: "Confucius"
-    },
-    {
-      text: "He who has a why to live can bear almost any how.",
-      author: "Friedrich Nietzsche"
-    },
-    {
-      text: "Simplicity is the ultimate sophistication.",
-      author: "Leonardo da Vinci"
-    },
-    {
-      text: "The soul that sees beauty may sometimes walk alone.",
-      author: "Johann Wolfgang von Goethe"
-    },
-    {
-      text: "In the middle of difficulty lies opportunity.",
-      author: "Albert Einstein"
+    /* ── Audio toggle ── */
+    .audio-btn {
+      position: fixed;
+      top: 1.5rem;
+      right: 1.5rem;
+      z-index: 10;
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      padding: 0.55rem 0.75rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: 'Cinzel', serif;
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      color: var(--muted);
+      text-transform: uppercase;
+      transition: border-color 0.3s, color 0.3s, background 0.3s;
+      animation: fadeDown 1s ease 0.8s both;
     }
-  ];
 
-  let current = 0;
-  let isAnimating = false;
+    .audio-btn:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+      background: var(--accent);
+    }
 
-  // ── Dots ──
-  const dotsEl = document.getElementById('dots');
-  quotes.forEach((_, i) => {
-    const d = document.createElement('div');
-    d.className = 'dot' + (i === 0 ? ' active' : '');
-    d.onclick = () => goTo(i);
-    dotsEl.appendChild(d);
-  });
+    .audio-btn.playing {
+      border-color: rgba(201, 168, 76, 0.4);
+      color: var(--gold);
+    }
 
-  function updateDots(idx) {
-    document.querySelectorAll('.dot').forEach((d, i) => {
-      d.classList.toggle('active', i === idx);
-    });
-  }
+    .audio-btn svg {
+      width: 13px;
+      height: 13px;
+      flex-shrink: 0;
+    }
 
-  function pad(n) { return String(n + 1).padStart(2, '0'); }
+    /* ripple ring when playing */
+    .audio-btn.playing::after {
+      content: '';
+      position: absolute;
+      inset: -4px;
+      border-radius: 3px;
+      border: 1px solid var(--gold);
+      opacity: 0;
+      animation: audioRing 2.5s ease-out infinite;
+    }
 
-  function renderQuote(idx) {
-    const q = quotes[idx];
-    document.getElementById('quoteText').textContent = q.text;
-    document.getElementById('quoteAuthor').textContent = '— ' + q.author;
-    document.getElementById('quoteNumber').textContent =
-      `${pad(idx)} / ${pad(quotes.length - 1)}`;
-    updateDots(idx);
-  }
+    @keyframes audioRing {
+      0% {
+        opacity: 0.5;
+        inset: -2px;
+      }
 
-  function goTo(idx) {
-    if (isAnimating || idx === current) return;
-    isAnimating = true;
-    const inner = document.getElementById('cardInner');
-    inner.classList.add('fade-out');
-    setTimeout(() => {
-      current = idx;
-      renderQuote(current);
-      inner.classList.remove('fade-out');
-      isAnimating = false;
-    }, 350);
-  }
-
-  function nextQuote() {
-    goTo((current + 1) % quotes.length);
-  }
-
-  // Initial render
-  renderQuote(0);
-
-  // ── Geometric pattern canvas ──
-  const canvas = document.getElementById('pattern');
-  const ctx = canvas.getContext('2d');
-
-  function resizeCanvas() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    drawPattern();
-  }
-
-  function drawPattern() {
-    const W = canvas.width, H = canvas.height;
-    ctx.clearRect(0, 0, W, H);
-    ctx.strokeStyle = '#c9a84c';
-    ctx.lineWidth = 0.8;
-
-    const size = 80;
-    const cols = Math.ceil(W / size) + 2;
-    const rows = Math.ceil(H / size) + 2;
-
-    for (let r = -1; r < rows; r++) {
-      for (let c = -1; c < cols; c++) {
-        const x = c * size;
-        const y = r * size;
-        const cx = x + size / 2;
-        const cy = y + size / 2;
-        const half = size / 2;
-
-        // outer square rotated 45°
-        ctx.beginPath();
-        ctx.moveTo(cx, cy - half);
-        ctx.lineTo(cx + half, cy);
-        ctx.lineTo(cx, cy + half);
-        ctx.lineTo(cx - half, cy);
-        ctx.closePath();
-        ctx.stroke();
-
-        // inner smaller diamond
-        const s2 = half * 0.48;
-        ctx.beginPath();
-        ctx.moveTo(cx, cy - s2);
-        ctx.lineTo(cx + s2, cy);
-        ctx.lineTo(cx, cy + s2);
-        ctx.lineTo(cx - s2, cy);
-        ctx.closePath();
-        ctx.stroke();
-
-        // connecting lines to 4 corners
-        [[x,y],[x+size,y],[x+size,y+size],[x,y+size]].forEach(([px,py]) => {
-          ctx.beginPath();
-          ctx.moveTo(cx, cy);
-          ctx.lineTo(px, py);
-          ctx.stroke();
-        });
+      100% {
+        opacity: 0;
+        inset: -10px;
       }
     }
-  }
+  </style>
+</head>
 
-  window.addEventListener('resize', resizeCanvas);
-  resizeCanvas();
+<body>
 
-  // ── Keyboard navigation ──
-  document.addEventListener('keydown', e => {
-    if (e.key === 'ArrowRight' || e.key === ' ') nextQuote();
-    if (e.key === 'ArrowLeft') goTo((current - 1 + quotes.length) % quotes.length);
-  });
+  <canvas id="pattern"></canvas>
 
-  // ── Ambient Audio (Web Audio API) ──
-let audioCtx = null;
-let masterGain = null;
-let isPlaying = false;
-const nodes = [];
+  <div class="container">
+    <header>
+      <h1 id="headerTitle">Reflections</h1>
+      <div class="divider"></div>
+      <div class="language-selector">
+        <button class="lang-btn active" data-lang="en" onclick="switchLanguage('en')">English</button>
+        <button class="lang-btn" data-lang="ms" onclick="switchLanguage('ms')">Malay</button>
+        <button class="lang-btn" data-lang="ar" onclick="switchLanguage('ar')">العربية</button>
+      </div>
+    </header>
 
-function buildAmbience() {
-  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  masterGain = audioCtx.createGain();
-  masterGain.gain.setValueAtTime(0, audioCtx.currentTime);
-  masterGain.connect(audioCtx.destination);
+    <div class="card" onclick="nextQuote()" title="Click for next quote">
+      <div class="card-inner" id="cardInner">
+        <span class="quote-number" id="quoteNumber">01 / 08</span>
+        <blockquote id="quoteText"></blockquote>
+        <div class="attribution" id="quoteAuthor"></div>
+      </div>
+      <span class="hint" id="cardHint">click to reveal</span>
+    </div>
 
-  // Layer 1 — brown noise (warmth)
-  function brownNoise() {
-    const bufferSize = audioCtx.sampleRate * 4;
-    const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
-    const data = buffer.getChannelData(0);
-    let lastOut = 0;
-    for (let i = 0; i < bufferSize; i++) {
-      const white = Math.random() * 2 - 1;
-      data[i] = (lastOut + 0.02 * white) / 1.02;
-      lastOut = data[i];
-      data[i] *= 3.5;
+    <div class="dots" id="dots"></div>
+
+    <button class="btn" onclick="nextQuote()" id="nextBtn">Next Reflection</button>
+  </div>
+
+  <button class="audio-btn" id="audioBtn" onclick="toggleAudio()" title="Toggle ambient sound">
+    <svg id="audioIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+      stroke-linejoin="round">
+      <!-- speaker base -->
+      <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+      <!-- muted lines (shown when off) -->
+      <line id="mutedX1" x1="23" y1="9" x2="17" y2="15" />
+      <line id="mutedX2" x1="17" y1="9" x2="23" y2="15" />
+      <!-- waves (hidden when off) -->
+      <path id="wave1" d="M15.54 8.46a5 5 0 0 1 0 7.07" style="display:none" />
+      <path id="wave2" d="M19.07 4.93a10 10 0 0 1 0 14.14" style="display:none" />
+    </svg>
+    <span id="audioLabel">Silence</span>
+  </button>
+
+  <script>
+    const translations = {
+      en: {
+        title: 'Reflections',
+        nextBtn: 'Next Reflection',
+        hint: 'click to reveal'
+      },
+      ms: {
+        title: 'Renungan',
+        nextBtn: 'Renungan Seterusnya',
+        hint: 'klik untuk melihat'
+      },
+      ar: {
+        title: 'تأملات',
+        nextBtn: 'التأمل التالي',
+        hint: 'اضغط للكشف'
+      }
+    };
+
+    const quotes = {
+      en: [
+        { text: "The more you know yourself, the more clarity there is. Self-knowledge has no end.", author: "Jiddu Krishnamurti" },
+        { text: "Whoever knows himself knows his Lord.", author: "Traditional Saying" },
+        { text: "Do not lose hope, nor be sad.", author: "Quran 3:139" },
+        { text: "The beginning of wisdom is to call things by their proper name.", author: "Confucius" },
+        { text: "He who has a why to live can bear almost any how.", author: "Friedrich Nietzsche" },
+        { text: "Simplicity is the ultimate sophistication.", author: "Leonardo da Vinci" },
+        { text: "The soul that sees beauty may sometimes walk alone.", author: "Johann Wolfgang von Goethe" },
+        { text: "In the middle of difficulty lies opportunity.", author: "Albert Einstein" }
+      ],
+      ms: [
+        { text: "Semakin anda mengenali diri anda, semakin jelas segalanya. Pengenalan diri tiada penghujungnya.", author: "Jiddu Krishnamurti" },
+        { text: "Sesiapa yang mengenal dirinya akan mengenal Tuhannya.", author: "Pepatah Tradisional" },
+        { text: "Janganlah kamu bersikap lemah, dan janganlah (pula) kamu bersedih hati.", author: "Al-Quran 3:139" },
+        { text: "Permulaan kebijaksanaan adalah memanggil sesuatu dengan nama yang sebenar.", author: "Confucius" },
+        { text: "Sesiapa yang mempunyai 'sebab' untuk hidup boleh menanggung apa sahaja 'bagaimana' ia berlaku.", author: "Friedrich Nietzsche" },
+        { text: "Kesederhanaan adalah kecanggihan yang mutlak.", author: "Leonardo da Vinci" },
+        { text: "Jiwa yang melihat keindahan kadangkala perlu berjalan sendirian.", author: "Johann Wolfgang von Goethe" },
+        { text: "Di tengah-tengah kesukaran terdapatnya peluang.", author: "Albert Einstein" }
+      ],
+      ar: [
+        { text: "كلما عرفت نفسك أكثر، كلما زاد الوضوح. معرفة الذات ليس لها نهاية.", author: "جيدو كريشنامورتي" },
+        { text: "من عرف نفسه فقد عرف ربه.", author: "قول مأثور" },
+        { text: "وَلَا تَهِنُوا وَلَا تَحْزَنُوا", author: "القرآن ٣:١٣٩" },
+        { text: "بداية الحكمة هي تسمية الأشياء بأسمائها الحقيقية.", author: "كونفوشيوس" },
+        { text: "من لديه سبب للعيش يمكنه أن يتحمل أي طريقة تقريباً.", author: "فريدريك نيتشه" },
+        { text: "البساطة هي أقصى درجات التطور.", author: "ليوناردو دا فينشي" },
+        { text: "الروح التي ترى الجمال قد تمشي وحيدة في بعض الأحيان.", author: "يوهان فولفغانغ فون غوته" },
+        { text: "في وسط الصعوبة تكمن الفرصة.", author: "ألبرت أينشتاين" }
+      ]
+    };
+
+    let current = 0;
+    let isAnimating = false;
+    let currentLang = 'en';
+
+    // ── Language Switching ──
+    function switchLanguage(lang) {
+      if (lang === currentLang) return;
+      currentLang = lang;
+
+      // Update active button
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.lang === lang);
+      });
+
+      // Update RTL for Arabic
+      if (lang === 'ar') {
+        document.body.classList.add('rtl');
+      } else {
+        document.body.classList.remove('rtl');
+      }
+
+      // Update UI text
+      updateUIText();
+
+      const inner = document.getElementById('cardInner');
+      inner.classList.add('fade-out');
+      setTimeout(() => {
+        renderQuote(current);
+        inner.classList.remove('fade-out');
+      }, 350);
     }
-    const src = audioCtx.createBufferSource();
-    src.buffer = buffer;
-    src.loop = true;
-    const g = audioCtx.createGain();
-    g.gain.value = 0.18;
-    src.connect(g).connect(masterGain);
-    src.start();
-    nodes.push(src);
-  }
 
-  // Layer 2 — slow sine drones (meditative hum)
-  function sineLayer(freq, gainVal, lfoFreq, lfoDepth) {
-    const osc = audioCtx.createOscillator();
-    osc.type = 'sine';
-    osc.frequency.value = freq;
+    function updateUIText() {
+      const t = translations[currentLang];
+      document.getElementById('headerTitle').textContent = t.title;
+      document.getElementById('nextBtn').textContent = t.nextBtn;
+      document.getElementById('cardHint').textContent = t.hint;
+    }
 
-    const lfo = audioCtx.createOscillator();
-    lfo.frequency.value = lfoFreq;
-    const lfoGain = audioCtx.createGain();
-    lfoGain.gain.value = lfoDepth;
-    lfo.connect(lfoGain).connect(osc.frequency);
+    // ── Dots ──
+    const dotsEl = document.getElementById('dots');
+    quotes[currentLang].forEach((_, i) => {
+      const d = document.createElement('div');
+      d.className = 'dot' + (i === 0 ? ' active' : '');
+      d.onclick = () => goTo(i);
+      dotsEl.appendChild(d);
+    });
 
-    const g = audioCtx.createGain();
-    g.gain.value = gainVal;
+    function updateDots(idx) {
+      document.querySelectorAll('.dot').forEach((d, i) => {
+        d.classList.toggle('active', i === idx);
+      });
+    }
 
-    // soft low-pass
-    const filter = audioCtx.createBiquadFilter();
-    filter.type = 'lowpass';
-    filter.frequency.value = 500;
+    function pad(n) { return String(n + 1).padStart(2, '0'); }
 
-    osc.connect(filter).connect(g).connect(masterGain);
-    osc.start(); lfo.start();
-    nodes.push(osc, lfo);
-  }
+    function renderQuote(idx) {
+      const qList = quotes[currentLang];
+      const q = qList[idx];
+      document.getElementById('quoteText').textContent = q.text;
+      document.getElementById('quoteAuthor').textContent = '— ' + q.author;
+      document.getElementById('quoteNumber').textContent =
+        `${pad(idx)} / ${pad(qList.length - 1)}`;
+      updateDots(idx);
+    }
 
-  brownNoise();
-  sineLayer(60,  0.06, 0.04, 0.8);   // deep sub tone
-  sineLayer(120, 0.04, 0.03, 0.5);   // warm octave
-  sineLayer(180, 0.025, 0.07, 0.3);  // gentle harmonic
-  sineLayer(240, 0.015, 0.05, 0.2);  // air
-}
+    function goTo(idx) {
+      if (isAnimating || idx === current) return;
+      isAnimating = true;
+      const inner = document.getElementById('cardInner');
+      inner.classList.add('fade-out');
+      setTimeout(() => {
+        current = idx;
+        renderQuote(current);
+        inner.classList.remove('fade-out');
+        isAnimating = false;
+      }, 350);
+    }
 
-function toggleAudio() {
-  const btn = document.getElementById('audioBtn');
-  const label = document.getElementById('audioLabel');
+    function nextQuote() {
+      goTo((current + 1) % quotes[currentLang].length);
+    }
 
-  if (!audioCtx) buildAmbience();
+    // Initial render
+    renderQuote(0);
 
-  if (!isPlaying) {
-    audioCtx.resume();
-    masterGain.gain.cancelScheduledValues(audioCtx.currentTime);
-    masterGain.gain.setValueAtTime(masterGain.gain.value, audioCtx.currentTime);
-    masterGain.gain.linearRampToValueAtTime(1, audioCtx.currentTime + 2.5); // slow fade in
-    isPlaying = true;
-    btn.classList.add('playing');
-    label.textContent = 'Ambient';
-    // swap icon to waves
-    document.getElementById('mutedX1').style.display = 'none';
-    document.getElementById('mutedX2').style.display = 'none';
-    document.getElementById('wave1').style.display = '';
-    document.getElementById('wave2').style.display = '';
-  } else {
-    masterGain.gain.cancelScheduledValues(audioCtx.currentTime);
-    masterGain.gain.setValueAtTime(masterGain.gain.value, audioCtx.currentTime);
-    masterGain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 1.5); // slow fade out
-    setTimeout(() => audioCtx.suspend(), 1600);
-    isPlaying = false;
-    btn.classList.remove('playing');
-    label.textContent = 'Silence';
-    document.getElementById('mutedX1').style.display = '';
-    document.getElementById('mutedX2').style.display = '';
-    document.getElementById('wave1').style.display = 'none';
-    document.getElementById('wave2').style.display = 'none';
-  }
-}
-</script>
+    // ── Geometric pattern canvas ──
+    const canvas = document.getElementById('pattern');
+    const ctx = canvas.getContext('2d');
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      drawPattern();
+    }
+
+    function drawPattern() {
+      const W = canvas.width, H = canvas.height;
+      ctx.clearRect(0, 0, W, H);
+      ctx.strokeStyle = '#c9a84c';
+      ctx.lineWidth = 0.8;
+
+      const size = 80;
+      const cols = Math.ceil(W / size) + 2;
+      const rows = Math.ceil(H / size) + 2;
+
+      for (let r = -1; r < rows; r++) {
+        for (let c = -1; c < cols; c++) {
+          const x = c * size;
+          const y = r * size;
+          const cx = x + size / 2;
+          const cy = y + size / 2;
+          const half = size / 2;
+
+          // outer square rotated 45°
+          ctx.beginPath();
+          ctx.moveTo(cx, cy - half);
+          ctx.lineTo(cx + half, cy);
+          ctx.lineTo(cx, cy + half);
+          ctx.lineTo(cx - half, cy);
+          ctx.closePath();
+          ctx.stroke();
+
+          // inner smaller diamond
+          const s2 = half * 0.48;
+          ctx.beginPath();
+          ctx.moveTo(cx, cy - s2);
+          ctx.lineTo(cx + s2, cy);
+          ctx.lineTo(cx, cy + s2);
+          ctx.lineTo(cx - s2, cy);
+          ctx.closePath();
+          ctx.stroke();
+
+          // connecting lines to 4 corners
+          [[x, y], [x + size, y], [x + size, y + size], [x, y + size]].forEach(([px, py]) => {
+            ctx.beginPath();
+            ctx.moveTo(cx, cy);
+            ctx.lineTo(px, py);
+            ctx.stroke();
+          });
+        }
+      }
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    // ── Keyboard navigation ──
+    document.addEventListener('keydown', e => {
+      if (e.key === 'ArrowRight' || e.key === ' ') nextQuote();
+      if (e.key === 'ArrowLeft') goTo((current - 1 + quotes[currentLang].length) % quotes[currentLang].length);
+    });
+  </script>
+
+  <script>
+    // ── Ambient Rain Audio (Web Audio API) ──
+    let audioCtx = null;
+    let masterGain = null;
+    let isPlaying = false;
+
+    function buildAmbience() {
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      masterGain = audioCtx.createGain();
+      masterGain.gain.setValueAtTime(0, audioCtx.currentTime);
+      masterGain.connect(audioCtx.destination);
+
+      // ── Layer 1: Base rain hiss (white noise → bandpass) ──
+      function makeNoise(bufferSeconds) {
+        const frames = audioCtx.sampleRate * bufferSeconds;
+        const buf = audioCtx.createBuffer(2, frames, audioCtx.sampleRate);
+        for (let c = 0; c < 2; c++) {
+          const d = buf.getChannelData(c);
+          for (let i = 0; i < frames; i++) d[i] = Math.random() * 2 - 1;
+        }
+        const src = audioCtx.createBufferSource();
+        src.buffer = buf;
+        src.loop = true;
+        return src;
+      }
+
+      // Heavy rain body — broad noise centred around 1 kHz
+      const rainBody = makeNoise(4);
+      const rainBP = audioCtx.createBiquadFilter();
+      rainBP.type = 'bandpass';
+      rainBP.frequency.value = 1000;
+      rainBP.Q.value = 0.4;
+      const rainBodyGain = audioCtx.createGain();
+      rainBodyGain.gain.value = 0.55;
+      rainBody.connect(rainBP).connect(rainBodyGain).connect(masterGain);
+      rainBody.start();
+
+      // High-frequency drizzle shimmer — thin noise at 5 kHz
+      const drizzle = makeNoise(3);
+      const drizzleBP = audioCtx.createBiquadFilter();
+      drizzleBP.type = 'bandpass';
+      drizzleBP.frequency.value = 5000;
+      drizzleBP.Q.value = 1.2;
+      const drizzleGain = audioCtx.createGain();
+      drizzleGain.gain.value = 0.18;
+      drizzle.connect(drizzleBP).connect(drizzleGain).connect(masterGain);
+      drizzle.start();
+
+      // Low rumble — deep noise below 200 Hz (distant thunder texture)
+      const rumble = makeNoise(6);
+      const rumbleLP = audioCtx.createBiquadFilter();
+      rumbleLP.type = 'lowpass';
+      rumbleLP.frequency.value = 180;
+      const rumbleGain = audioCtx.createGain();
+      rumbleGain.gain.value = 0.35;
+      rumble.connect(rumbleLP).connect(rumbleGain).connect(masterGain);
+      rumble.start();
+
+      // ── Layer 2: Drip rhythm — random individual droplet pops ──
+      function scheduleDrip() {
+        if (!isPlaying) return;
+
+        const osc = audioCtx.createOscillator();
+        const env = audioCtx.createGain();
+        const filter = audioCtx.createBiquadFilter();
+
+        osc.type = 'sine';
+        osc.frequency.value = 400 + Math.random() * 900; // random pitch drip
+
+        filter.type = 'bandpass';
+        filter.frequency.value = osc.frequency.value;
+        filter.Q.value = 8;
+
+        const now = audioCtx.currentTime;
+        env.gain.setValueAtTime(0, now);
+        env.gain.linearRampToValueAtTime(0.08 + Math.random() * 0.06, now + 0.005);
+        env.gain.exponentialRampToValueAtTime(0.0001, now + 0.18 + Math.random() * 0.15);
+
+        osc.connect(filter).connect(env).connect(masterGain);
+        osc.start(now);
+        osc.stop(now + 0.4);
+
+        // next drip in 80–400 ms (dense but irregular)
+        const next = 80 + Math.random() * 320;
+        setTimeout(scheduleDrip, next);
+      }
+
+      // ── Layer 3: Slow swell — gentle volume breathing ──
+      function swell() {
+        if (!isPlaying) return;
+        const now = audioCtx.currentTime;
+        const swellGain = 0.85 + Math.random() * 0.15;
+        rainBodyGain.gain.linearRampToValueAtTime(swellGain, now + 4 + Math.random() * 3);
+        setTimeout(swell, (5 + Math.random() * 4) * 1000);
+      }
+
+      // Start drips and swell after context resumes
+      audioCtx.resume().then(() => {
+        scheduleDrip();
+        swell();
+      });
+    }
+
+    function toggleAudio() {
+      const btn = document.getElementById('audioBtn');
+      const label = document.getElementById('audioLabel');
+
+      if (!audioCtx) buildAmbience();
+
+      if (!isPlaying) {
+        isPlaying = true;
+        audioCtx.resume().then(() => {
+          masterGain.gain.cancelScheduledValues(audioCtx.currentTime);
+          masterGain.gain.setValueAtTime(0, audioCtx.currentTime);
+          masterGain.gain.linearRampToValueAtTime(1, audioCtx.currentTime + 3);
+        });
+        btn.classList.add('playing');
+        label.textContent = 'Ambient';
+        document.getElementById('mutedX1').style.display = 'none';
+        document.getElementById('mutedX2').style.display = 'none';
+        document.getElementById('wave1').style.display = '';
+        document.getElementById('wave2').style.display = '';
+      } else {
+        isPlaying = false;
+        masterGain.gain.cancelScheduledValues(audioCtx.currentTime);
+        masterGain.gain.setValueAtTime(masterGain.gain.value, audioCtx.currentTime);
+        masterGain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 2);
+        setTimeout(() => audioCtx.suspend(), 2100);
+        btn.classList.remove('playing');
+        label.textContent = 'Silence';
+        document.getElementById('mutedX1').style.display = '';
+        document.getElementById('mutedX2').style.display = '';
+        document.getElementById('wave1').style.display = 'none';
+        document.getElementById('wave2').style.display = 'none';
+      }
+    }
+  </script>
+
 </body>
+
 </html>
