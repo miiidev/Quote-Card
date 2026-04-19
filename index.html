@@ -77,6 +77,39 @@
       text-transform: uppercase;
     }
 
+    .language-selector {
+      margin-top: 1.2rem;
+      display: flex;
+      gap: 0.8rem;
+      justify-content: center;
+      animation: fadeDown 1s ease 0.15s both;
+    }
+
+    .lang-btn {
+      font-family: 'Cinzel', serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+      background: transparent;
+      border: 1px solid var(--border);
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+      transition: background 0.3s, border-color 0.3s, color 0.3s;
+      border-radius: 2px;
+    }
+
+    .lang-btn:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+
+    .lang-btn.active {
+      background: var(--accent);
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+
     header .divider {
       margin: 0.6rem auto;
       width: 60px;
@@ -168,6 +201,40 @@
       font-family: 'Cinzel', serif;
     }
 
+    /* ── Language Selector ── */
+    .lang-selector {
+      position: absolute;
+      top: 1.5rem;
+      right: 2rem;
+      display: flex;
+      gap: 1rem;
+      z-index: 10;
+      animation: fadeDown 1s ease both;
+    }
+
+    .lang-btn {
+      background: transparent;
+      border: none;
+      color: var(--muted);
+      font-family: 'Cinzel', serif;
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      cursor: pointer;
+      transition: color 0.3s, text-shadow 0.3s;
+      padding-bottom: 2px;
+      border-bottom: 1px solid transparent;
+    }
+
+    .lang-btn:hover {
+      color: var(--gold-light);
+    }
+
+    .lang-btn.active {
+      color: var(--gold);
+      border-bottom-color: var(--gold);
+      text-shadow: 0 0 8px rgba(201, 168, 76, 0.4);
+    }
+
     /* ── Counter dots ── */
     .dots {
       display: flex;
@@ -218,16 +285,55 @@
       from { opacity: 0; transform: translateY(16px); }
       to   { opacity: 1; transform: translateY(0); }
     }
+
+    /* ── RTL Support for Arabic ── */
+    body.rtl {
+      direction: rtl;
+      text-align: right;
+    }
+
+    body.rtl blockquote::before {
+      content: '\201D';
+      margin-right: 0;
+      margin-left: 0.1rem;
+    }
+
+    body.rtl .hint {
+      right: auto;
+      left: 18px;
+    }
+
+    body.rtl .card::before {
+      left: auto;
+      right: 12px;
+      border-width: 1px 1px 0 0;
+    }
+
+    body.rtl .card::after {
+      right: auto;
+      left: 12px;
+      border-width: 0 0 1px 1px;
+    }
   </style>
 </head>
 <body>
 
 <canvas id="pattern"></canvas>
 
+<div class="lang-selector">
+  <button class="lang-btn active" data-lang="en" onclick="setLang('en')">EN</button>
+  <button class="lang-btn" data-lang="es" onclick="setLang('es')">ES</button>
+</div>
+
 <div class="container">
   <header>
-    <h1>Reflections</h1>
+    <h1 id="headerTitle">Reflections</h1>
     <div class="divider"></div>
+    <div class="language-selector">
+      <button class="lang-btn active" data-lang="en" onclick="switchLanguage('en')">English</button>
+      <button class="lang-btn" data-lang="ms" onclick="switchLanguage('ms')">Malay</button>
+      <button class="lang-btn" data-lang="ar" onclick="switchLanguage('ar')">العربية</button>
+    </div>
   </header>
 
   <div class="card" onclick="nextQuote()" title="Click for next quote">
@@ -236,15 +342,33 @@
       <blockquote id="quoteText"></blockquote>
       <div class="attribution" id="quoteAuthor"></div>
     </div>
-    <span class="hint">click to reveal</span>
+    <span class="hint" id="cardHint">click to reveal</span>
   </div>
 
   <div class="dots" id="dots"></div>
 
-  <button class="btn" onclick="nextQuote()">Next Reflection</button>
+  <button class="btn" onclick="nextQuote()" id="nextBtn">Next Reflection</button>
 </div>
 
 <script>
+  const translations = {
+    en: {
+      title: 'Reflections',
+      nextBtn: 'Next Reflection',
+      hint: 'click to reveal'
+    },
+    ms: {
+      title: 'Renungan',
+      nextBtn: 'Renungan Seterusnya',
+      hint: 'klik untuk melihat'
+    },
+    ar: {
+      title: 'تأملات',
+      nextBtn: 'التأمل التالي',
+      hint: 'اضغط للكشف'
+    }
+  };
+
   const quotes = [
     {
       text: "The more you know yourself, the more clarity there is. Self-knowledge has no end.",
@@ -282,6 +406,36 @@
 
   let current = 0;
   let isAnimating = false;
+  let currentLang = 'en';
+
+  // ── Language Switching ──
+  function switchLanguage(lang) {
+    if (lang === currentLang) return;
+    currentLang = lang;
+    
+    // Update active button
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.lang === lang);
+    });
+
+    // Update RTL for Arabic
+    if (lang === 'ar') {
+      document.body.classList.add('rtl');
+    } else {
+      document.body.classList.remove('rtl');
+    }
+
+    // Update UI text
+    updateUIText();
+    renderQuote(current);
+  }
+
+  function updateUIText() {
+    const t = translations[currentLang];
+    document.getElementById('headerTitle').textContent = t.title;
+    document.getElementById('nextBtn').textContent = t.nextBtn;
+    document.getElementById('cardHint').textContent = t.hint;
+  }
 
   // ── Dots ──
   const dotsEl = document.getElementById('dots');
@@ -393,7 +547,7 @@
   // ── Keyboard navigation ──
   document.addEventListener('keydown', e => {
     if (e.key === 'ArrowRight' || e.key === ' ') nextQuote();
-    if (e.key === 'ArrowLeft') goTo((current - 1 + quotes.length) % quotes.length);
+    if (e.key === 'ArrowLeft') goTo((current - 1 + quotes[currentLang].length) % quotes[currentLang].length);
   });
 </script>
 </body>
