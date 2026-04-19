@@ -201,40 +201,6 @@
       font-family: 'Cinzel', serif;
     }
 
-    /* ── Language Selector ── */
-    .lang-selector {
-      position: absolute;
-      top: 1.5rem;
-      right: 2rem;
-      display: flex;
-      gap: 1rem;
-      z-index: 10;
-      animation: fadeDown 1s ease both;
-    }
-
-    .lang-btn {
-      background: transparent;
-      border: none;
-      color: var(--muted);
-      font-family: 'Cinzel', serif;
-      font-size: 0.75rem;
-      letter-spacing: 0.1em;
-      cursor: pointer;
-      transition: color 0.3s, text-shadow 0.3s;
-      padding-bottom: 2px;
-      border-bottom: 1px solid transparent;
-    }
-
-    .lang-btn:hover {
-      color: var(--gold-light);
-    }
-
-    .lang-btn.active {
-      color: var(--gold);
-      border-bottom-color: var(--gold);
-      text-shadow: 0 0 8px rgba(201, 168, 76, 0.4);
-    }
-
     /* ── Counter dots ── */
     .dots {
       display: flex;
@@ -320,11 +286,6 @@
 
 <canvas id="pattern"></canvas>
 
-<div class="lang-selector">
-  <button class="lang-btn active" data-lang="en" onclick="setLang('en')">EN</button>
-  <button class="lang-btn" data-lang="es" onclick="setLang('es')">ES</button>
-</div>
-
 <div class="container">
   <header>
     <h1 id="headerTitle">Reflections</h1>
@@ -369,40 +330,38 @@
     }
   };
 
-  const quotes = [
-    {
-      text: "The more you know yourself, the more clarity there is. Self-knowledge has no end.",
-      author: "Jiddu Krishnamurti"
-    },
-    {
-      text: "Whoever knows himself knows his Lord.",
-      author: "Traditional Saying"
-    },
-    {
-      text: "Do not lose hope, nor be sad.",
-      author: "Quran 3:139"
-    },
-    {
-      text: "The beginning of wisdom is to call things by their proper name.",
-      author: "Confucius"
-    },
-    {
-      text: "He who has a why to live can bear almost any how.",
-      author: "Friedrich Nietzsche"
-    },
-    {
-      text: "Simplicity is the ultimate sophistication.",
-      author: "Leonardo da Vinci"
-    },
-    {
-      text: "The soul that sees beauty may sometimes walk alone.",
-      author: "Johann Wolfgang von Goethe"
-    },
-    {
-      text: "In the middle of difficulty lies opportunity.",
-      author: "Albert Einstein"
-    }
-  ];
+  const quotes = {
+    en: [
+      { text: "The more you know yourself, the more clarity there is. Self-knowledge has no end.", author: "Jiddu Krishnamurti" },
+      { text: "Whoever knows himself knows his Lord.", author: "Traditional Saying" },
+      { text: "Do not lose hope, nor be sad.", author: "Quran 3:139" },
+      { text: "The beginning of wisdom is to call things by their proper name.", author: "Confucius" },
+      { text: "He who has a why to live can bear almost any how.", author: "Friedrich Nietzsche" },
+      { text: "Simplicity is the ultimate sophistication.", author: "Leonardo da Vinci" },
+      { text: "The soul that sees beauty may sometimes walk alone.", author: "Johann Wolfgang von Goethe" },
+      { text: "In the middle of difficulty lies opportunity.", author: "Albert Einstein" }
+    ],
+    ms: [
+      { text: "Semakin anda mengenali diri anda, semakin jelas segalanya. Pengenalan diri tiada penghujungnya.", author: "Jiddu Krishnamurti" },
+      { text: "Sesiapa yang mengenal dirinya akan mengenal Tuhannya.", author: "Pepatah Tradisional" },
+      { text: "Janganlah kamu bersikap lemah, dan janganlah (pula) kamu bersedih hati.", author: "Al-Quran 3:139" },
+      { text: "Permulaan kebijaksanaan adalah memanggil sesuatu dengan nama yang sebenar.", author: "Confucius" },
+      { text: "Sesiapa yang mempunyai 'sebab' untuk hidup boleh menanggung apa sahaja 'bagaimana' ia berlaku.", author: "Friedrich Nietzsche" },
+      { text: "Kesederhanaan adalah kecanggihan yang mutlak.", author: "Leonardo da Vinci" },
+      { text: "Jiwa yang melihat keindahan kadangkala perlu berjalan sendirian.", author: "Johann Wolfgang von Goethe" },
+      { text: "Di tengah-tengah kesukaran terdapatnya peluang.", author: "Albert Einstein" }
+    ],
+    ar: [
+      { text: "كلما عرفت نفسك أكثر، كلما زاد الوضوح. معرفة الذات ليس لها نهاية.", author: "جيدو كريشنامورتي" },
+      { text: "من عرف نفسه فقد عرف ربه.", author: "قول مأثور" },
+      { text: "وَلَا تَهِنُوا وَلَا تَحْزَنُوا", author: "القرآن ٣:١٣٩" },
+      { text: "بداية الحكمة هي تسمية الأشياء بأسمائها الحقيقية.", author: "كونفوشيوس" },
+      { text: "من لديه سبب للعيش يمكنه أن يتحمل أي طريقة تقريباً.", author: "فريدريك نيتشه" },
+      { text: "البساطة هي أقصى درجات التطور.", author: "ليوناردو دا فينشي" },
+      { text: "الروح التي ترى الجمال قد تمشي وحيدة في بعض الأحيان.", author: "يوهان فولفغانغ فون غوته" },
+      { text: "في وسط الصعوبة تكمن الفرصة.", author: "ألبرت أينشتاين" }
+    ]
+  };
 
   let current = 0;
   let isAnimating = false;
@@ -427,7 +386,13 @@
 
     // Update UI text
     updateUIText();
-    renderQuote(current);
+    
+    const inner = document.getElementById('cardInner');
+    inner.classList.add('fade-out');
+    setTimeout(() => {
+      renderQuote(current);
+      inner.classList.remove('fade-out');
+    }, 350);
   }
 
   function updateUIText() {
@@ -439,7 +404,7 @@
 
   // ── Dots ──
   const dotsEl = document.getElementById('dots');
-  quotes.forEach((_, i) => {
+  quotes[currentLang].forEach((_, i) => {
     const d = document.createElement('div');
     d.className = 'dot' + (i === 0 ? ' active' : '');
     d.onclick = () => goTo(i);
@@ -455,11 +420,12 @@
   function pad(n) { return String(n + 1).padStart(2, '0'); }
 
   function renderQuote(idx) {
-    const q = quotes[idx];
+    const qList = quotes[currentLang];
+    const q = qList[idx];
     document.getElementById('quoteText').textContent = q.text;
     document.getElementById('quoteAuthor').textContent = '— ' + q.author;
     document.getElementById('quoteNumber').textContent =
-      `${pad(idx)} / ${pad(quotes.length - 1)}`;
+      `${pad(idx)} / ${pad(qList.length - 1)}`;
     updateDots(idx);
   }
 
@@ -477,7 +443,7 @@
   }
 
   function nextQuote() {
-    goTo((current + 1) % quotes.length);
+    goTo((current + 1) % quotes[currentLang].length);
   }
 
   // Initial render
