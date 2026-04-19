@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Reflections</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Cinzel:wght@400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0d0d0f;
+      --surface: #14141a;
+      --border: rgba(180, 150, 90, 0.25);
+      --gold: #c9a84c;
+      --gold-light: #e8c97a;
+      --text: #e8e0d0;
+      --muted: #7a7264;
+      --accent: #2a2218;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Cormorant Garamond', serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* ── Geometric pattern background ── */
+    canvas#pattern {
+      position: fixed;
+      inset: 0;
+      opacity: 0.07;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── Radial glow ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(ellipse 60% 50% at 50% 50%, rgba(201,168,76,0.08) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2.5rem;
+      padding: 2rem;
+      max-width: 680px;
+      width: 100%;
+    }
+
+    header {
+      text-align: center;
+      animation: fadeDown 1s ease both;
+    }
+
+    header h1 {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(1rem, 3vw, 1.2rem);
+      letter-spacing: 0.35em;
+      color: var(--gold);
+      font-weight: 400;
+      text-transform: uppercase;
+    }
+
+    header .divider {
+      margin: 0.6rem auto;
+      width: 60px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    }
+
+    /* ── Card ── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 3rem 3.5rem;
+      width: 100%;
+      position: relative;
+      cursor: pointer;
+      overflow: hidden;
+      animation: fadeUp 1s ease 0.3s both;
+      transition: border-color 0.3s;
+    }
+
+    .card:hover { border-color: rgba(180, 150, 90, 0.5); }
+
+    /* corner ornaments */
+    .card::before, .card::after {
+      content: '';
+      position: absolute;
+      width: 20px; height: 20px;
+      border-color: var(--gold);
+      border-style: solid;
+      opacity: 0.5;
+    }
+    .card::before { top: 12px; left: 12px; border-width: 1px 0 0 1px; }
+    .card::after  { bottom: 12px; right: 12px; border-width: 0 1px 1px 0; }
+
+    .card-inner {
+      transition: opacity 0.35s ease, transform 0.35s ease;
+    }
+    .card-inner.fade-out {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+
+    .quote-number {
+      font-family: 'Cinzel', serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      color: var(--gold);
+      margin-bottom: 1.5rem;
+      display: block;
+    }
+
+    blockquote {
+      font-size: clamp(1.2rem, 3vw, 1.6rem);
+      font-weight: 300;
+      line-height: 1.7;
+      color: var(--text);
+      font-style: italic;
+      margin-bottom: 1.8rem;
+    }
+
+    blockquote::before {
+      content: '\201C';
+      font-size: 3.5rem;
+      line-height: 0;
+      vertical-align: -0.6rem;
+      color: var(--gold);
+      margin-right: 0.1rem;
+      font-style: normal;
+    }
+
+    .attribution {
+      font-family: 'Cinzel', serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+
+    .hint {
+      position: absolute;
+      bottom: 14px;
+      right: 18px;
+      font-size: 0.6rem;
+      letter-spacing: 0.15em;
+      color: var(--muted);
+      text-transform: uppercase;
+      opacity: 0.6;
+      font-family: 'Cinzel', serif;
+    }
+
+    /* ── Counter dots ── */
+    .dots {
+      display: flex;
+      gap: 0.5rem;
+      animation: fadeUp 1s ease 0.5s both;
+    }
+
+    .dot {
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: var(--muted);
+      transition: background 0.3s, transform 0.3s;
+      cursor: pointer;
+    }
+    .dot.active {
+      background: var(--gold);
+      transform: scale(1.4);
+    }
+
+    /* ── Button ── */
+    .btn {
+      font-family: 'Cinzel', serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--gold);
+      background: transparent;
+      border: 1px solid var(--border);
+      padding: 0.9rem 2.5rem;
+      cursor: pointer;
+      transition: background 0.3s, border-color 0.3s, color 0.3s;
+      animation: fadeUp 1s ease 0.6s both;
+      border-radius: 2px;
+    }
+    .btn:hover {
+      background: var(--accent);
+      border-color: var(--gold);
+      color: var(--gold-light);
+    }
+    .btn:active { transform: scale(0.98); }
+
+    /* ── Animations ── */
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="pattern"></canvas>
+
+<div class="container">
+  <header>
+    <h1>Reflections</h1>
+    <div class="divider"></div>
+  </header>
+
+  <div class="card" onclick="nextQuote()" title="Click for next quote">
+    <div class="card-inner" id="cardInner">
+      <span class="quote-number" id="quoteNumber">01 / 08</span>
+      <blockquote id="quoteText"></blockquote>
+      <div class="attribution" id="quoteAuthor"></div>
+    </div>
+    <span class="hint">click to reveal</span>
+  </div>
+
+  <div class="dots" id="dots"></div>
+
+  <button class="btn" onclick="nextQuote()">Next Reflection</button>
+</div>
+
+<script>
+  const quotes = [
+    {
+      text: "The more you know yourself, the more clarity there is. Self-knowledge has no end.",
+      author: "Jiddu Krishnamurti"
+    },
+    {
+      text: "Whoever knows himself knows his Lord.",
+      author: "Traditional Saying"
+    },
+    {
+      text: "Do not lose hope, nor be sad.",
+      author: "Quran 3:139"
+    },
+    {
+      text: "The beginning of wisdom is to call things by their proper name.",
+      author: "Confucius"
+    },
+    {
+      text: "He who has a why to live can bear almost any how.",
+      author: "Friedrich Nietzsche"
+    },
+    {
+      text: "Simplicity is the ultimate sophistication.",
+      author: "Leonardo da Vinci"
+    },
+    {
+      text: "The soul that sees beauty may sometimes walk alone.",
+      author: "Johann Wolfgang von Goethe"
+    },
+    {
+      text: "In the middle of difficulty lies opportunity.",
+      author: "Albert Einstein"
+    }
+  ];
+
+  let current = 0;
+  let isAnimating = false;
+
+  // ── Dots ──
+  const dotsEl = document.getElementById('dots');
+  quotes.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i === 0 ? ' active' : '');
+    d.onclick = () => goTo(i);
+    dotsEl.appendChild(d);
+  });
+
+  function updateDots(idx) {
+    document.querySelectorAll('.dot').forEach((d, i) => {
+      d.classList.toggle('active', i === idx);
+    });
+  }
+
+  function pad(n) { return String(n + 1).padStart(2, '0'); }
+
+  function renderQuote(idx) {
+    const q = quotes[idx];
+    document.getElementById('quoteText').textContent = q.text;
+    document.getElementById('quoteAuthor').textContent = '— ' + q.author;
+    document.getElementById('quoteNumber').textContent =
+      `${pad(idx)} / ${pad(quotes.length - 1)}`;
+    updateDots(idx);
+  }
+
+  function goTo(idx) {
+    if (isAnimating || idx === current) return;
+    isAnimating = true;
+    const inner = document.getElementById('cardInner');
+    inner.classList.add('fade-out');
+    setTimeout(() => {
+      current = idx;
+      renderQuote(current);
+      inner.classList.remove('fade-out');
+      isAnimating = false;
+    }, 350);
+  }
+
+  function nextQuote() {
+    goTo((current + 1) % quotes.length);
+  }
+
+  // Initial render
+  renderQuote(0);
+
+  // ── Geometric pattern canvas ──
+  const canvas = document.getElementById('pattern');
+  const ctx = canvas.getContext('2d');
+
+  function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    drawPattern();
+  }
+
+  function drawPattern() {
+    const W = canvas.width, H = canvas.height;
+    ctx.clearRect(0, 0, W, H);
+    ctx.strokeStyle = '#c9a84c';
+    ctx.lineWidth = 0.8;
+
+    const size = 80;
+    const cols = Math.ceil(W / size) + 2;
+    const rows = Math.ceil(H / size) + 2;
+
+    for (let r = -1; r < rows; r++) {
+      for (let c = -1; c < cols; c++) {
+        const x = c * size;
+        const y = r * size;
+        const cx = x + size / 2;
+        const cy = y + size / 2;
+        const half = size / 2;
+
+        // outer square rotated 45°
+        ctx.beginPath();
+        ctx.moveTo(cx, cy - half);
+        ctx.lineTo(cx + half, cy);
+        ctx.lineTo(cx, cy + half);
+        ctx.lineTo(cx - half, cy);
+        ctx.closePath();
+        ctx.stroke();
+
+        // inner smaller diamond
+        const s2 = half * 0.48;
+        ctx.beginPath();
+        ctx.moveTo(cx, cy - s2);
+        ctx.lineTo(cx + s2, cy);
+        ctx.lineTo(cx, cy + s2);
+        ctx.lineTo(cx - s2, cy);
+        ctx.closePath();
+        ctx.stroke();
+
+        // connecting lines to 4 corners
+        [[x,y],[x+size,y],[x+size,y+size],[x,y+size]].forEach(([px,py]) => {
+          ctx.beginPath();
+          ctx.moveTo(cx, cy);
+          ctx.lineTo(px, py);
+          ctx.stroke();
+        });
+      }
+    }
+  }
+
+  window.addEventListener('resize', resizeCanvas);
+  resizeCanvas();
+
+  // ── Keyboard navigation ──
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === ' ') nextQuote();
+    if (e.key === 'ArrowLeft') goTo((current - 1 + quotes.length) % quotes.length);
+  });
+</script>
+</body>
+</html>
